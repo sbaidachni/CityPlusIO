@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "name": "myQueueItem",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "analyticqueue",
+      "connection": "cityplusstorage_STORAGE"
+    }
+  ],
+  "disabled": false
+}
