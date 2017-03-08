@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\resources.sql" />
+    <Build Include="dbo\person.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="CityPlusDb.refactorlog" />
