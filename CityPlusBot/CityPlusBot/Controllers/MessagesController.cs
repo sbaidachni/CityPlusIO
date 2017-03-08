@@ -1,24 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Connector;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
-using Microsoft.Bot.Connector;
-using Newtonsoft.Json;
-using Microsoft.Bot.Builder.Dialogs;
 
 namespace CityPlusBot
-{
+{ 
+    using Activity = Microsoft.Bot.Connector.Activity;
+
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
-        /// </summary>
-        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
+        public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
             // check if activity is of type message
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
@@ -30,27 +23,9 @@ namespace CityPlusBot
                 HandleSystemMessage(activity);
             }
             return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
-            /*
-            if (activity.Type == ActivityTypes.Message)
-            {
-                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-                // calculate something for us to return
-                int length = (activity.Text ?? string.Empty).Length;
-
-                // return our reply to the user
-                Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
-                await connector.Conversations.ReplyToActivityAsync(reply);
-            }
-            else
-            {
-                HandleSystemMessage(activity);
-            }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
-            */
         }
-        
-        private Activity HandleSystemMessage(Activity message)
+
+        private Activity HandleSystemMessage(Microsoft.Bot.Connector.Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
@@ -78,6 +53,5 @@ namespace CityPlusBot
 
             return null;
         }
-        
-        }
+    }
 }
