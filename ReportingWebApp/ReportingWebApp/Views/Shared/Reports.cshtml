@@ -1,0 +1,25 @@
+﻿@model ReportingWebApp.Models.ReportsViewModel
+@{
+    Layout = null;
+
+    var classNames = "panel panel-default dropdown";
+
+    if (this.Request.Path.IndexOf("Report") > -1)
+    {
+        classNames += " active";
+    }
+}
+
+
+        <div class="panel-body">
+            <ul class="nav navbar-nav">
+                @foreach (var report in Model.Reports)
+                {
+                    <!--var reportClass = Request.QueryString["reportId"] == (report.Id ? "active" : "");-->
+                    <li>
+                        @Html.ActionLink(report.Name, "Report", new { reportId = report.Id, workspaceSId=Model.ReportWorkspace[report.Id] })
+                    </li>
+                }
+            </ul>
+        </div>
+
