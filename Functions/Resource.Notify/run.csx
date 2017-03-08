@@ -1,8 +1,17 @@
 using System;
 
-public static void Run(string resource, TraceWriter log)
+public static void Run(Resource resource, TraceWriter log)
 {
-    log.Info($"C# Queue trigger function processed: {resource}");
+    var users = new User[];
+    foreach (var user in users)
+    {
+        //Notification
+    }
+}
+
+public class User
+{
+    public string Channel;
 }
 
 public class Resource
