@@ -8,6 +8,7 @@ public static async Task Run(HttpRequestMessage req, out string message, TraceWr
     var data = await req.Content.ReadAsAsync<Resource>();
 
     //Insert into database
+    var insert = $"INSERT INTO resource ([description, quantity, category, location]) VALUES ('{data.description}', {data.quantity}, '{data.category}', geography::Point({data.latitude}, {data.longitude}, 4326)')";
 
     message = JsonConvert.SerializeObject(data);
 }
@@ -20,3 +21,5 @@ public class Resource
     public decimal latitude;
     public decimal latitude;
 }
+
+private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
