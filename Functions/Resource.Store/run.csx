@@ -9,7 +9,7 @@ public static async Task Run(HttpRequestMessage req, out string message, TraceWr
 
     //Insert into database
 
-    message = JsonConvert.Serialize(data);
+    message = JsonConvert.SerializeObject(data);
 }
 
 public class Resource
