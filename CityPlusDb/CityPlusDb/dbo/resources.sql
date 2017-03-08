@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[resources]
 (
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    [description] NVARCHAR(MAX) NULL
+	[id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [description] NVARCHAR(MAX) NOT NULL, 
+    [quantity] INT NOT NULL DEFAULT 0
 )
