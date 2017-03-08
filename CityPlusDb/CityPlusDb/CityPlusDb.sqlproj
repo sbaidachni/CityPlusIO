@@ -64,6 +64,7 @@
   <ItemGroup>
     <Build Include="dbo\resources.sql" />
     <Build Include="dbo\person.sql" />
+    <Build Include="dbo\botlogstables.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="CityPlusDb.refactorlog" />
