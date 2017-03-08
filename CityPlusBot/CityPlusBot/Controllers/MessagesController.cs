@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
+using Microsoft.Bot.Builder.Dialogs;
 
 namespace CityPlusBot
 {
@@ -19,6 +20,17 @@ namespace CityPlusBot
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+            // check if activity is of type message
+            if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
+            {
+                await Conversation.SendAsync(activity, () => new CollectInfoDialog());
+            }
+            else
+            {
+                HandleSystemMessage(activity);
+            }
+            return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
+            /*
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
@@ -35,8 +47,9 @@ namespace CityPlusBot
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
+            */
         }
-
+        
         private Activity HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
@@ -65,5 +78,6 @@ namespace CityPlusBot
 
             return null;
         }
-    }
+        
+        }
 }
