@@ -1,10 +1,10 @@
 {
   "bindings": [
     {
-      "name": "myQueueItem",
+      "name": "resource",
       "type": "queueTrigger",
       "direction": "in",
-      "queueName": "userlist",
+      "queueName": "newresource",
       "connection": "cityplusstorage_STORAGE"
     }
   ],

@@ -1,11 +1,14 @@
 {
   "bindings": [
     {
-      "name": "myQueueItem",
-      "type": "queueTrigger",
+      "name": "req",
+      "type": "httpTrigger",
       "direction": "in",
-      "queueName": "userlist",
-      "connection": "cityplusstorage_STORAGE"
+      "authLevel": "function",
+      "methods": [
+        "POST",
+        "UPDATE"
+      ]
     }
   ],
   "disabled": false
