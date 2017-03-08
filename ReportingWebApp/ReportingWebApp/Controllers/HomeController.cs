@@ -29,6 +29,7 @@ namespace ReportingWebApp.Controllers
             this.apiUrl = ConfigurationManager.AppSettings["powerbi:ApiUrl"];
         }
 
+        [Authorize]
         public ActionResult Index()
         {
             return View();
@@ -70,6 +71,7 @@ namespace ReportingWebApp.Controllers
             }
         }
 
+        [Authorize]
         public async Task<ActionResult> Report(string reportId, string workspaceSId)
         {
             using (var client = this.CreatePowerBIClient())
