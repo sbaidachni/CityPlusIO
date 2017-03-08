@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{79bddebb-ec15-4dc6-b7c0-3c6a52434792}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -46,6 +46,8 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
+    <SqlCodeAnalysisRules>+!Microsoft.Rules.Data.SR0001;+!Microsoft.Rules.Data.SR0004;+!Microsoft.Rules.Data.SR0005;+!Microsoft.Rules.Data.SR0006;+!Microsoft.Rules.Data.SR0007;+!Microsoft.Rules.Data.SR0008;+!Microsoft.Rules.Data.SR0009;+!Microsoft.Rules.Data.SR0010;+!Microsoft.Rules.Data.SR0011;+!Microsoft.Rules.Data.SR0012;+!Microsoft.Rules.Data.SR0013;+!Microsoft.Rules.Data.SR0014;+!Microsoft.Rules.Data.SR0015;+!Microsoft.Rules.Data.SR0016</SqlCodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -57,5 +59,12 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="dbo" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\resources.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="CityPlusDb.refactorlog" />
   </ItemGroup>
 </Project>
