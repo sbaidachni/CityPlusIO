@@ -1,7 +1,11 @@
+#r "Newtonsoft.Json"
+
 using System;
 
-public static void Run(Resource resource, TraceWriter log)
+public static void Run(string msg, TraceWriter log)
 {
+    var resource = JsonConvert.DeserializeObject<Resource>(msg);
+
     var users = new User[];
     foreach (var user in users)
     {

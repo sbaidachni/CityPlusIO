@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "name": "resource",
+      "name": "msg",
       "type": "queueTrigger",
       "direction": "in",
       "queueName": "newresource",
