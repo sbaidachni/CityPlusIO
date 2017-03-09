@@ -74,7 +74,18 @@ public static async void Run(string myQueueItem, TraceWriter log)
     {
         log.Info("get an attachment info");
         var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
+        log.Info("get results from vision");
 
+        SqlConnection conn2=new SqlConnection(ConnString);
+        SqlCommand commUpdate=new SqlCommand("Update Attachment SET isAdultContent=@par2 where AttachmentId=@par1",conn2);
+        commUpdate.Parameters.Add("par1",reader["AttachmentId"].ToString());
+        commUpdate.Parameters.Add("par2",result.Adult.IsAdultContent);
+
+        conn2.Open();
+        log.Info("update Attachment table");
+        commUpdate.ExecuteNonQuery();
+        log.Info("Attachment is updated");
+        conn2.Close();
     }
     conn.Close();
     log.Info("Vision API is done");
