@@ -164,9 +164,7 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 private static async Task<string> GetVisionData(string imageUri, TraceWriter log)
 {
 
-    string s="";
-    try
-    {
+
         log.Info("test");
         var client = new HttpClient();
         var queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -180,24 +178,20 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
 
         HttpResponseMessage response;
         var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
-    log.Info("test");
+         log.Info("test");
         var image = container.Get(imageUri).Result;
 
-log.Info("test");
+        log.Info("test");
         using (var content = new ByteArrayContent(image))
         {
             content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             response = await client.PostAsync(uri, content);
-        log.Info("test");
+            log.Info("test");
             
         }
-        s=await response.Content.ReadAsStringAsync();
+        string s=await response.Content.ReadAsStringAsync();
         
-    }
-    catch(Exception ex)
-    {
-        log.Info(ex.Message);
-    }
+
     log.Info(s);
     return s;
 }
