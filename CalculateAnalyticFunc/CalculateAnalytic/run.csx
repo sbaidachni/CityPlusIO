@@ -74,12 +74,13 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         response = await client.PostAsync(uri, content);
 
-        String s=await response.Content.ReadAsStringAsync();
+        string s=await response.Content.ReadAsStringAsync();
         log.Info(s);
 
         s=s.Substring(s.IndexOf("\"score\":")+8);
         log.Info(s);
-        s=Substring(0,s.IndexOf(","));
+
+        s=Substring(0,s.IndexOf(','));
         log.Info(s);
     }
 
