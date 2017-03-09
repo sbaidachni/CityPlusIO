@@ -116,17 +116,12 @@ public static async void Run(string myQueueItem, TraceWriter log)
             conn3.Close();
         }*/
 
-        log.Info("get an attachment info");
+        log.Info("start emotion API");
         var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
-        log.Info("get results from vision");
+        log.Info("get results from emotion");
     }
     conn.Close();
-    log.Info("Vision API is done");
-
-    //Emotion API
-
-
-    var emotionKey=System.Environment.GetEnvironmentVariable("emotionAPI", EnvironmentVariableTarget.Process);
+    log.Info("Analytics is done");
 }
 
 private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
