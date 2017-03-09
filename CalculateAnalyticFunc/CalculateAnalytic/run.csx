@@ -192,7 +192,7 @@ try
 
             using (var content = new ByteArrayContent(image1))
             {
-               content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+               content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                response = await client.PostAsync(uri, content);
                string s=await response.Content.ReadAsStringAsync();
         log.Info(s);
