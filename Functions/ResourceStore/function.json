@@ -5,10 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "authLevel": "function",
-      "methods": [
-        "POST",
-        "UPDATE"
-      ],
+      "methods": [ "POST" ],
       "route":"/"
     },
     {
