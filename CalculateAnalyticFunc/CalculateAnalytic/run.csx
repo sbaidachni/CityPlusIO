@@ -80,13 +80,17 @@ public static async void Run(string myQueueItem, TraceWriter log)
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
         log.Info(reader["AttachmentId"].ToString());
         if (result.Adult==null)
+        try
         {
-            log.Info("null");
-        }
         log.Info(Convert.ToInt32(result.Adult.IsAdultContent).ToString());
         log.Info(Convert.ToInt32(result.Adult.IsRacyContent).ToString());
         log.Info(result.Adult.AdultScore.ToString());
         log.Info(result.Adult.RacyScore.ToString());
+        }
+        catch(Exception ex)
+        {
+            log.Info(ex.Message);
+        }
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
         commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
         commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
