@@ -20,7 +20,10 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
         var users = reader.Models<User>();
         foreach (var user in users)
         {
-            output.Add(JsonConvert.Serialize(new Notification() { channelId = user.channelId }));
+            output.Add(JsonConvert.Serialize(new Notification() {
+                channelId = user.channelId
+                , resourceDescription = data.description
+            }));
         }
     }
 }
@@ -29,6 +32,7 @@ private static string Env(string name) => System.Environment.GetEnvironmentVaria
 public class Notification
 {
     public string channelId;
+    public string resourceDescription;
 }
 
 public class User
