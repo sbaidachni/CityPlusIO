@@ -74,7 +74,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
     while(reader.Read())
     {
         log.Info("get an attachment info");
-        //var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
+        var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from vision");
 
         SqlConnection conn2 =new SqlConnection(ConnString);
@@ -119,11 +119,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("start emotion API");
         var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from emotion");
-        dynamic data = JObject.Parse(emotionResult);
-        foreach(var el in data)
-        {
-            log.Info("Help");
-        }
+
     }
     conn.Close();
     log.Info("Analytics is done");
