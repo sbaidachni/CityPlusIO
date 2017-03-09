@@ -102,7 +102,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
 
         foreach (var tag in dataD.tags)
         {
-            SqlConnection conn3 = new SqlConnection(ConnString);
+            /*SqlConnection conn3 = new SqlConnection(ConnString);
             SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
             commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
             commInsert.Parameters.Add("par2", tag.name);
@@ -112,7 +112,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info("update AttachmentTags table");
             commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
-            conn3.Close();
+            conn3.Close();*/
         }
 
         log.Info("start emotion API");
