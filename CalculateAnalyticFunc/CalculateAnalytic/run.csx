@@ -125,14 +125,14 @@ private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWr
 {
     var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
     
-    var image = container.Get(reader["ContentUrl"].ToString()).Result;  
+    var image = container.Get(imageUri).Result;  
 
     AnalysisResult res=null;
 
     using (var stream = new System.IO.MemoryStream(image))
     {
         IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
-        res=client.AnalyzeImageAsync(stream);
+        res=client.AnalyzeImageAsync(stream,visualFeatures:null);
     }
 
     return res;
