@@ -79,6 +79,10 @@ public static async void Run(string myQueueItem, TraceWriter log)
         SqlConnection conn2 =new SqlConnection(ConnString);
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
         log.Info(reader["AttachmentId"].ToString());
+        if (result.Adult==null)
+        {
+            log.Info("null");
+        }
         log.Info(Convert.ToInt32(result.Adult.IsAdultContent).ToString());
         log.Info(Convert.ToInt32(result.Adult.IsRacyContent).ToString());
         log.Info(result.Adult.AdultScore.ToString());
