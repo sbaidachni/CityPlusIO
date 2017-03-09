@@ -8,10 +8,11 @@
       "methods": [
         "POST",
         "UPDATE"
-      ]
+      ],
+      "route":"/"
     },
     {
-      "name": "$return",
+      "name": "message",
       "direction": "out",
       "queueName": "newresource",
       "connection": "cityplusstorage_STORAGE"
