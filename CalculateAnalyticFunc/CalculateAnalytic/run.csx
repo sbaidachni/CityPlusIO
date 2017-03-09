@@ -77,7 +77,7 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
         String s=await response.Content.ReadAsStringAsync();
         log.Info(s);
 
-        s=s.Substring(s.IndexOf("\"score\":"+8));
+        s=s.Substring(s.IndexOf("\"score\":")+8);
         log.Info(s);
         s=Substring(0,s.IndexOf(","));
         log.Info(s);
