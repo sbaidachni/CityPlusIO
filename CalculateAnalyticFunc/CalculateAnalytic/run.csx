@@ -77,7 +77,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("get results from vision");
 
         SqlConnection conn2 =new SqlConnection(ConnString);
-        SqlCommand commUpdate=new SqlCommand("UPDATE Attachment SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
+        SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
         commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
         commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
