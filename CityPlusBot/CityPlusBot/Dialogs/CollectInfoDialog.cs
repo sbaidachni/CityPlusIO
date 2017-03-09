@@ -2,13 +2,11 @@
 using Microsoft.Bot.Builder.Location;
 using Microsoft.Bot.Connector;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Configuration;
 
-namespace CityPlusBot
+namespace CityPlusBot.Dialogs
 {
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
@@ -43,18 +41,59 @@ namespace CityPlusBot
                 GetLocation(context).Wait();
             else
             {
-                // We have a location! 
-                // Confirm that this is where they currently are!
+                var address = entity;
+                /*PromptDialog.Confirm(
+                    context,
+                    this.OnSpellCheckIntent,
+                    $"Did you mean '{this.newMessage}'?",
+                    "Didn't get that!",
+                    promptStyle: PromptStyle.Auto);*/
             }
-        }
 
+            // Go to Form!
+
+
+        }
+/*
+        private async Task OnSpellCheckIntent(IDialogContext context, IAwaitable<bool> result)
+        {
+            var accepted = (await result);
+            if (accepted)
+            {
+                var uri = this.services[0].BuildUri(new LuisRequest(this.newMessage));
+                var newResult = await this.services[0].QueryAsync(uri, new CancellationToken());
+                switch (newResult.Intents[0].Intent.ToLower())
+                {
+                    case "none":
+                        await this.None(context, newResult);
+                        break;
+                    case "hello":
+                        await this.Hello(context, newResult);
+                        break;
+                    case "viasport.intent.howtocoach":
+                        await this.HowToCoach(context, newResult);
+                        break;
+                    case "viasport.intent.findresource":
+                        await this.FindResource(context, newResult);
+                        break;
+                    case "viasport.intent.findprogram":
+                        await this.FindProgram(context, newResult);
+                        break;
+                }
+            }
+            else
+            {
+                var message = "Ok, can you tell me what you meant?";
+                await context.PostAsync(BotDbStrings.MakeItAcceptable(message));
+                context.Wait(this.MessageReceived);
+            }
+        }*/
         private async Task GetLocation(IDialogContext context)
         {
-
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
             var prompt = "Where are you? Type or say an address or cross streets so we can find resources nearby.";
             // TODO: Override 
-            var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.None, LocationRequiredFields.StreetAddress | LocationRequiredFields.PostalCode);
+            var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.UseNativeControl, LocationRequiredFields.None);
            context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
@@ -76,32 +115,14 @@ namespace CityPlusBot
                 await context.PostAsync("Thanks! I will find resources near " + formattedAddress);
             }
 
-            var entity = new Entity();
-            entity.SetAs(new Place()
-            {
-                Geo = place.GetGeoCoordinates()
-            });
+            var geoLocationEntity = new Entity();
+            geoLocationEntity.SetAs(new Place(place));
 
-            context.UserData.SetValue(_currentLocationStr,entity);
-            //entities.Add(entity);
+            context.UserData.SetValue(_currentLocationStr,geoLocationEntity);
+            
 
 
             context.Done<string>(null);
-        }
-
-        public async Task OnGetLocation(IDialogContext context)
-        {
-
-        }
-
-        public async Task GetDescription(IDialogContext context)
-        {
-
-        }
-
-        public async Task GetResources(IDialogContext context)
-        {
-
         }
     }
 }
