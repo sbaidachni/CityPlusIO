@@ -123,6 +123,32 @@ if (dataD.tags!=null)
             log.Info("start emotion API");
             var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
             log.Info("get results from emotion");
+
+            var dataE = JsonConvert.DeserializeObject<FaceData[]>(emotionResult);
+            foreach(var face in dataE)
+            {
+                SqlConnection conn3 = new SqlConnection(ConnString);
+                SqlCommand commInsert = new SqlCommand("INSERT INTO Faces (AttachmentId, heightSize, leftSize, topSize,widthSize, anger, contempt, disgust, fear, happiness, neutral, sadness, surprise) VALUES (@par1, @par2, @par3, @par4, @par5, @par6, @par7, @par8, @par9, @par10, @par11, @par12, @par13)", conn3);
+                commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
+                commInsert.Parameters.Add("par2", face.faceRectangle.height);
+                commInsert.Parameters.Add("par3", face.faceRectangle.left);
+                commInsert.Parameters.Add("par4", face.faceRectangle.top);
+                commInsert.Parameters.Add("par5", face.faceRectangle.width);
+                commInsert.Parameters.Add("par6", face.scores.anger);
+                commInsert.Parameters.Add("par7", face.scores.contempt);
+                commInsert.Parameters.Add("par8", face.scores.disgust);
+                commInsert.Parameters.Add("par9", face.scores.fear);
+                commInsert.Parameters.Add("par10", face.scores.happiness);
+                commInsert.Parameters.Add("par11", face.scores.neutral);
+                commInsert.Parameters.Add("par12", face.scores.sadness);
+                commInsert.Parameters.Add("par13", face.scores.surprise);
+
+                conn3.Open();
+                log.Info("update Faces table");
+                commInsert.ExecuteNonQuery();
+                log.Info("Faces is updated");
+                conn3.Close();
+            }
         }
     }
     conn.Close();
@@ -254,4 +280,41 @@ private static async Task<string> GetEmotionData(string imageUri, TraceWriter lo
         public string name { get; set; }
 
         public double confidence { get; set; }
+    }
+
+    class FaceData
+    {
+        public FaceRectangle faceRectangle { get; set; }
+
+        public Scores scores { get; set; }
+    }
+
+    public class FaceRectangle
+    {
+        public int height { get; set; }
+
+        public int left { get; set; }
+
+        public int top { get; set; }
+
+        public int width { get; set; }
+    }
+
+    public class Scores
+    {
+        public double anger { get; set; }
+
+        public double contempt { get; set; }
+
+        public double disgust { get; set; }
+
+        public double fear { get; set; }
+
+        public double happiness { get; set; }
+
+        public double neutral { get; set; }
+
+        public double sadness { get; set; }
+
+        public double surprise { get; set; }
     }
