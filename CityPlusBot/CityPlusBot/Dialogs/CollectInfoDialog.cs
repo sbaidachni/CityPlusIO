@@ -13,7 +13,6 @@ namespace CityPlusBot
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
-        //public bool _haveLocation = false;
         //public List<Entity> _entities = new List<Entity>();
         // Location
         // User Identified Information (For sending notifications)
@@ -33,64 +32,28 @@ namespace CityPlusBot
             var message = await argument;
             await context.PostAsync("Hi, I'm the CityPlus bot. I'm here to help find you the resources you need. Please provide me more information so I can better help you.");
             //context.Wait(Introduction);
-            await GetLocation(context);
+            await GetInformation(context);
         }
 
-        public async Task GetLocation(IDialogContext context)
+        public async Task GetInformation(IDialogContext context)
         {
-            bool _haveLocation = false;
-            if (_haveLocation == false)
-            {
-                PromptDialog.Confirm(
-                                   context,
-                                   this.OnGetLocation,
-                                   "Could we have your location so we can find you resources in your area?",
-                                   "Sorry I don't understand!",
-                                   promptStyle: PromptStyle.Auto);
-            }
-            else
-            {
-                await GetResources(context);
-            }
-
+            GetLocation(context).Wait();
+            
+            // else...
         }
 
-        private async Task OnGetLocation(IDialogContext context, IAwaitable<bool> result)
+        private async Task GetLocation(IDialogContext context)
         {
-            var accepted = (await result);
-            if (accepted)
-            {
-                /*
-                var entity = new Entity();
-                entity.SetAs(new Place()
-                {
-                    Geo = new GeoCoordinates()
-                    {
-                        Latitude = 32.4141,
-                        Longitude = 43.1123123,
-                    }
-                });
-                _entities.Add(entity);
-                /// Find location!
-                /// 
-                */
-                await context.PostAsync("Ok let's look that up!");
-                var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
-                var prompt = "Where are you? Type or say an address.";
-                var locationDialog = new LocationDialog(apiKey, context.Activity.ChannelId, prompt, LocationOptions.None, LocationRequiredFields.StreetAddress | LocationRequiredFields.PostalCode);
-                context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
-            }
-            else
-            {
-                await context.PostAsync("I don't think we can help you without a location!");
-            }
 
+            var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
+            var prompt = "Where are you? Type or say an address so we can find resources nearby.";
+            var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.None, LocationRequiredFields.StreetAddress | LocationRequiredFields.PostalCode);
+           context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
         private async Task ResumeAfterLocationDialogAsync(IDialogContext context, IAwaitable<Place> result)
         {
             var place = await result;
-
             if (place != null)
             {
                 var address = place.GetPostalAddress();
@@ -103,8 +66,16 @@ namespace CityPlusBot
                         address.Country
                     }.Where(x => !string.IsNullOrEmpty(x)));
 
-                await context.PostAsync("Thanks, I will ship it to " + formattedAddress);
+                await context.PostAsync("Thanks, I will find resources near " + formattedAddress);
             }
+
+            var entity = new Entity();
+            entity.SetAs(new Place()
+            {
+                Geo = place.GetGeoCoordinates()
+            });
+
+            //entities.Add(entity);
 
             context.Done<string>(null);
         }
