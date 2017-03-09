@@ -189,10 +189,8 @@ try
     
             var image1 = container1.Get(imageUri).Result;
 
-            // Request body
-            byte[] byteData = Encoding.UTF8.GetBytes(image1);
 
-            using (var content = new ByteArrayContent(byteData))
+            using (var content = new ByteArrayContent(image1))
             {
                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                response = await client.PostAsync(uri, content);
