@@ -179,7 +179,7 @@ try
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
 
             // Request parameters
-            //queryString["visualFeatures"] = "Categories";
+            queryString["visualFeatures"] = "Tags, Faces, Adult";
             //queryString["details"] = "{string}";
             //queryString["language"] = "en";
             var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
