@@ -1,6 +1,8 @@
 #r "System.Data"
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "System.Web"
+#r Newtonsoft.Json.dll
+#r Microsoft.ProjectOxford.Vision.dll
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -25,6 +27,8 @@ public static async void Run(string myQueueItem, TraceWriter log)
     log.Info($"C# Queue trigger function processed: {myQueueItem}");
 
     int queryID=int.Parse(myQueueItem);
+
+    //TextAnalitycs
     SqlConnection conn=new SqlConnection(ConnString);
     SqlCommand comm=new SqlCommand("select * from Conversations where ConversationId=@par1",conn);
 
@@ -40,7 +44,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         if (reader["Text"].ToString().Length>0)
         {
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
-            var sentiment=await UpdateAnalyticsData(reader["Text"].ToString(), log);
+            var sentiment=await GetAnalyticsData(reader["Text"].ToString(), log);
             log.Info($"Service returned: {sentiment}");
             SqlConnection conn2=new SqlConnection(ConnString);
             SqlCommand commUpdate=new SqlCommand("Update Conversations Set sentiment=@par1 where ConversationId=@par2",conn2);
@@ -54,9 +58,29 @@ public static async void Run(string myQueueItem, TraceWriter log)
         }
     }
     conn.Close();
+    log.Info("Text Analytics is finished");
+
+    //Vision API (Tags)
+    comm=new SqlCommand("select * from Attachments where ConversationId=@par1",conn);
+    comm.Parameters.Add("par1",queryID);
+    conn.Open();
+    log.Info("Ready to execute command");
+    reader=comm.ExecuteReader();
+    var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
+    while(reader.Read())
+    {
+        log.Info("get an attachment info")
+        var image = container.Get(reader["ContentUrl"].ToString()).Result;
+        log.Info(image.ToString());
+
+    }
+    conn.close();
+    log.Info("Vision API is done");
+
+    //Emotion API
 }
 
-private static async Task<double> UpdateAnalyticsData(string text, TraceWriter log)
+private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 {
     var client = new HttpClient();
     var queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -90,4 +114,9 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
     }
 
     return ret;
+}
+
+private static async Task GetVisionData(string imageUri, TraceWriter log)
+{
+
 }
