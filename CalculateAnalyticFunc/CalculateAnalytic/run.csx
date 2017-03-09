@@ -79,10 +79,13 @@ public static async void Run(string myQueueItem, TraceWriter log)
         SqlConnection conn2 =new SqlConnection(ConnString);
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
 
+        dynamic data = JObject.Parse(result);
+
+        log.Info(data.adult.IsAdultContent.ToString()); 
 
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
 
-        commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
+        /*commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
         commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
         commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
         commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
@@ -94,7 +97,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("update Attachments table");
         commUpdate.ExecuteNonQuery();
         log.Info("Attachment is updated");
-        conn2.Close();
+        conn2.Close();*/
 
 
         /*foreach (var tag in result.Tags)
