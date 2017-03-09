@@ -95,14 +95,14 @@ public static async void Run(string myQueueItem, TraceWriter log)
         foreach (var tag in result.Tags)
         {
             SqlConnection conn3 = new SqlConnection(ConnString);
-            SqlCommand commUpdate = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
-            commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
-            commUpdate.Parameters.Add("par2", tag.Name);
-            commUpdate.Parameters.Add("par3", tag.Confidence);
+            SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
+            commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
+            commInsert.Parameters.Add("par2", tag.Name);
+            commInsert.Parameters.Add("par3", tag.Confidence);
 
             conn3.Open();
             log.Info("update AttachmentTags table");
-            commUpdate.ExecuteNonQuery();
+            commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
             conn3.Close();
         }
