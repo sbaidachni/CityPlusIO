@@ -77,12 +77,23 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("get results from vision");
 
         SqlConnection conn2 =new SqlConnection(ConnString);
-        SqlCommand commUpdate=new SqlCommand("UPDATE Attachment SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
+        SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
+        log.Info(reader["AttachmentId"].ToString());
+        if (result.Adult==null)
+        {
+            log.Info("null");
+        }
+        log.Info(Convert.ToInt32(result.Adult.IsAdultContent).ToString());
+        log.Info(Convert.ToInt32(result.Adult.IsRacyContent).ToString());
+        log.Info(result.Adult.AdultScore.ToString());
+        log.Info(result.Adult.RacyScore.ToString());
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
         commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
         commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
         commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
         commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
+
+        log.Info("parameters provided");
 
 
         conn2.Open();
@@ -154,16 +165,27 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 
 private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
+    AnalysisResult res=null;
+    try
+    {
+        log.Info("start");
     var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
     
     var image = container.Get(imageUri).Result;  
 
-    AnalysisResult res=null;
+    log.Info("Image");
 
     using (var stream = new System.IO.MemoryStream(image))
     {
+        log.Info("start call");
         IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
         res=await client.AnalyzeImageAsync(stream,visualFeatures:null);
+    }
+    log.Info("image done");
+    }
+    catch(Exception ex)
+    {
+        log.Info(ex.Message);
     }
 
     return res;
