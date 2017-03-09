@@ -36,14 +36,14 @@ public static async void Run(string myQueueItem, TraceWriter log)
         if (reader["Text"].ToString().Length>0)
         {
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
-            var sentiment=await UpdateAnalyticsData(reader["Text"].ToString());
+            var sentiment=await UpdateAnalyticsData(reader["Text"].ToString(), log);
             log.Info($"Service returned: {sentiment}");
         }
     }
     conn.Close();
 }
 
-private static async Task<double> UpdateAnalyticsData(string text)
+private static async Task<double> UpdateAnalyticsData(string text, TraceWriter log)
 {
     var client = new HttpClient();
     var queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
