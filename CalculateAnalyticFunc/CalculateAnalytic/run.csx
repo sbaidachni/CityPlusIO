@@ -161,13 +161,14 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 
 private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
+    AnalysisResult res=null;
     try
     {
     var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
     
     var image = container.Get(imageUri).Result;  
 
-    AnalysisResult res=null;
+    
 
     using (var stream = new System.IO.MemoryStream(image))
     {
