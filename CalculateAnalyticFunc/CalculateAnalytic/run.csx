@@ -84,6 +84,8 @@ public static async void Run(string myQueueItem, TraceWriter log)
         commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
         commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
 
+        log.Info("parameters provided");
+
 
         conn2.Open();
         log.Info("update Attachments table");
