@@ -1,7 +1,7 @@
 #r "System.Data"
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "System.Web"
-#r "Newtonsoft.Json.dll
+#r "Newtonsoft.Json.dll"
 #r "Microsoft.ProjectOxford.Vision.dll"
 
 // 8.0.1 for net45
@@ -74,7 +74,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info(image.ToString());
 
     }
-    conn.close();
+    conn.Close();
     log.Info("Vision API is done");
 
     //Emotion API
