@@ -76,16 +76,36 @@ public static async void Run(string myQueueItem, TraceWriter log)
         var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from vision");
 
-        SqlConnection conn2=new SqlConnection(ConnString);
-        SqlCommand commUpdate=new SqlCommand("Update Attachment SET isAdultContent=@par2 where AttachmentId=@par1",conn2);
-        commUpdate.Parameters.Add("par1",reader["AttachmentId"].ToString());
-        commUpdate.Parameters.Add("par2",result.Adult.IsAdultContent);
+        SqlConnection conn2 =new SqlConnection(ConnString);
+        SqlCommand commUpdate=new SqlCommand("UPDATE Attachment SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
+        commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
+        commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
+        commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
+        commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
+        commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
+
 
         conn2.Open();
-        log.Info("update Attachment table");
+        log.Info("update Attachments table");
         commUpdate.ExecuteNonQuery();
         log.Info("Attachment is updated");
         conn2.Close();
+
+
+        foreach (var tag in result.Tags)
+        {
+            SqlConnection conn3 = new SqlConnection(ConnString);
+            SqlCommand commUpdate = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
+            commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
+            commUpdate.Parameters.Add("par2", tag.Name);
+            commUpdate.Parameters.Add("par3", tag.Confidence);
+
+            conn3.Open();
+            log.Info("update AttachmentTags table");
+            commUpdate.ExecuteNonQuery();
+            log.Info("AttachmentTag is updated");
+            conn3.Close();
+        }
     }
     conn.Close();
     log.Info("Vision API is done");
