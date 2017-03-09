@@ -119,8 +119,6 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("start emotion API");
         var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from emotion");
-        dynamic data = JObject.Parse(emotionResult);
-        log.Info(data.Length.ToString());
     }
     conn.Close();
     log.Info("Analytics is done");
