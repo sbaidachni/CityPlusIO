@@ -1,6 +1,6 @@
 using System;
 
-public static void Run(string myQueueItem, TraceWriter log)
+public static void Run(string message, TraceWriter log)
 {
-    log.Info($"C# Queue trigger function processed: {myQueueItem}");
+    log.Info($"C# Queue trigger function processed: {message}");
 }

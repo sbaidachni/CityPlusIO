@@ -3,6 +3,7 @@
 #r "System.Web"
 #r "Newtonsoft.Json.dll"
 #r "Microsoft.ProjectOxford.Vision.dll"
+#r "System.IO"
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -18,6 +19,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System​.Net​.Http​.Headers;
 using System.Text;
+using System.IO;
+using Microsoft.ProjectOxford.Vision;
+using Microsoft.ProjectOxford.Vision.Contract;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
@@ -61,23 +65,55 @@ public static async void Run(string myQueueItem, TraceWriter log)
     log.Info("Text Analytics is finished");
 
     //Vision API (Tags)
-    comm=new SqlCommand("select * from Attachments where ConversationId=@par1",conn);
+    comm=new SqlCommand("select * from Attachments where ConversationId=@par1 and CHARINDEX('image',ContentType)>0",conn);
     comm.Parameters.Add("par1",queryID);
     conn.Open();
     log.Info("Ready to execute command");
     reader=comm.ExecuteReader();
-    var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
     while(reader.Read())
     {
         log.Info("get an attachment info");
-        var image = container.Get(reader["ContentUrl"].ToString()).Result;
-        log.Info(image.ToString());
+        var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
+        log.Info("get results from vision");
 
+        SqlConnection conn2 =new SqlConnection(ConnString);
+        SqlCommand commUpdate=new SqlCommand("UPDATE Attachment SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
+        commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
+        commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
+        commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
+        commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
+        commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
+
+
+        conn2.Open();
+        log.Info("update Attachments table");
+        commUpdate.ExecuteNonQuery();
+        log.Info("Attachment is updated");
+        conn2.Close();
+
+
+        foreach (var tag in result.Tags)
+        {
+            SqlConnection conn3 = new SqlConnection(ConnString);
+            SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
+            commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
+            commInsert.Parameters.Add("par2", tag.Name);
+            commInsert.Parameters.Add("par3", tag.Confidence);
+
+            conn3.Open();
+            log.Info("update AttachmentTags table");
+            commInsert.ExecuteNonQuery();
+            log.Info("AttachmentTag is updated");
+            conn3.Close();
+        }
     }
     conn.Close();
     log.Info("Vision API is done");
 
     //Emotion API
+
+
+    var emotionKey=System.Environment.GetEnvironmentVariable("emotionAPI", EnvironmentVariableTarget.Process);
 }
 
 private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
@@ -116,7 +152,19 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
     return ret;
 }
 
-private static async Task GetVisionData(string imageUri, TraceWriter log)
+private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
+    var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
+    
+    var image = container.Get(imageUri).Result;  
 
+    AnalysisResult res=null;
+
+    using (var stream = new System.IO.MemoryStream(image))
+    {
+        IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
+        res=await client.AnalyzeImageAsync(stream,visualFeatures:null);
+    }
+
+    return res;
 }

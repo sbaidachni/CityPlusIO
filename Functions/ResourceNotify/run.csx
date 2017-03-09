@@ -1,10 +1,12 @@
 #r "Newtonsoft.Json"
 
 using System;
+using System.Collections.Generic;
+using Newtonsoft;
 using King.Mapper;
 using King.Mapper.Data;
 
-public static void Run(string msg, TraceWriter log)
+public static async Task Run(string msg, ICollector<string> output, TraceWriter log)
 {
     var data = JsonConvert.DeserializeObject<Resource>(msg);
 
@@ -13,14 +15,28 @@ public static void Run(string msg, TraceWriter log)
 
     using (var connection = new SqlConnection(connectionString))
     {
-        var dataReader = await executor.DataReader(insert);
+        var reader = await executor.DataReader(insert);
 
         var users = reader.Models<User>();
         foreach (var user in users)
         {
-            //Send Notifications to uses
+            output.Add(JsonConvert.Serialize(new Notification() {
+                channelId = user.channelId
+                , resourceDescription = data.description
+                , resourceLatitude = data.latitude
+                , resourceLongitude = data.longitude
+            }));
         }
     }
+}
+private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
+
+public class Notification
+{
+    public string channelId;
+    public string resourceDescription;
+    public decimal resourceLatitude;
+    public decimal resourceLongitude;
 }
 
 public class User
@@ -34,5 +50,5 @@ public class Resource
     public string category;
     public int quantity;
     public decimal latitude;
-    public decimal latitude;
+    public decimal longitude;
 }

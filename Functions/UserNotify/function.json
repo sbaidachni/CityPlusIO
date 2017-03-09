@@ -1,12 +1,12 @@
 {
   "bindings": [
     {
-      "name": "myQueueItem",
+      "name": "message",
       "type": "queueTrigger",
       "direction": "in",
       "queueName": "userlist",
       "connection": "cityplusstorage_STORAGE"
     }
   ],
-  "disabled": false
+  "disabled": true
 }

@@ -6,6 +6,12 @@
       "direction": "in",
       "queueName": "newresource",
       "connection": "cityplusstorage_STORAGE"
+    },
+    {
+      "direction": "out",
+      "name": "output",
+      "queueName": "userlist",
+      "connection": "cityplusstorage_STORAGE"
     }
   ],
   "disabled": false
