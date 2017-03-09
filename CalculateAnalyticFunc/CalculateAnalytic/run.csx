@@ -171,7 +171,7 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
         client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
 
         // Request parameters
-        queryString["visualFeatures"] = "Adult";
+        queryString["visualFeatures"] = "Adult, Faces, Tags";
         var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
 
         HttpResponseMessage response;
