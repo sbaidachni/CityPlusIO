@@ -78,20 +78,10 @@ public static async void Run(string myQueueItem, TraceWriter log)
 
         SqlConnection conn2 =new SqlConnection(ConnString);
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
-        log.Info(reader["AttachmentId"].ToString());
-        if (result.Adult==null)
-        try
-        {
-        log.Info(Convert.ToInt32(result.Adult.IsAdultContent).ToString());
-        log.Info(Convert.ToInt32(result.Adult.IsRacyContent).ToString());
-        log.Info(result.Adult.AdultScore.ToString());
-        log.Info(result.Adult.RacyScore.ToString());
-        }
-        catch(Exception ex)
-        {
-            log.Info(ex.Message);
-        }
+
+
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
+
         commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
         commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
         commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
@@ -107,7 +97,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         conn2.Close();
 
 
-        foreach (var tag in result.Tags)
+        /*foreach (var tag in result.Tags)
         {
             SqlConnection conn3 = new SqlConnection(ConnString);
             SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
@@ -120,7 +110,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
             commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
             conn3.Close();
-        }
+        }*/
     }
     conn.Close();
     log.Info("Vision API is done");
@@ -167,64 +157,41 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
     return ret;
 }
 
-private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
+private static async Task<string> GetVisionData(string imageUri, TraceWriter log)
 {
 
-try
-{
-            var client = new HttpClient();
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
-
-            // Request headers
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
-
-            // Request parameters
-            queryString["visualFeatures"] = "Tags, Faces, Adult";
-            //queryString["details"] = "{string}";
-            //queryString["language"] = "en";
-            var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
-
-            HttpResponseMessage response;
-            var container1 = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
-    
-            var image1 = container1.Get(imageUri).Result;
-
-
-            using (var content = new ByteArrayContent(image1))
-            {
-               content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-               response = await client.PostAsync(uri, content);
-               string s=await response.Content.ReadAsStringAsync();
-        log.Info(s);
-            }
-}
-catch(Exception ex)
-{
-    log.Info(ex.Message);
-}
-
-    AnalysisResult res=null;
+    string s;
     try
     {
-        log.Info("start");
-    var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
+`       var client = new HttpClient();
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+        // Request headers
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
+
+        // Request parameters
+        queryString["visualFeatures"] = "Tags, Faces, Adult";
+        var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
+
+        HttpResponseMessage response;
+        var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
     
-    var image = container.Get(imageUri).Result;  
+        var image = container.Get(imageUri).Result;
 
-    log.Info("Image");
 
-    using (var stream = new System.IO.MemoryStream(image))
-    {
-        log.Info("start call");
-        IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
-        res=await client.AnalyzeImageAsync(stream,new string[]{"Adult","Faces","Tags"});
-    }
-    log.Info("image done");
+        using (var content = new ByteArrayContent(image))
+        {
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            response = await client.PostAsync(uri, content);
+        
+            log.Info(s);
+        }
+        s=await response.Content.ReadAsStringAsync();
+        
     }
     catch(Exception ex)
     {
         log.Info(ex.Message);
     }
-
-    return res;
+    return s;
 }
