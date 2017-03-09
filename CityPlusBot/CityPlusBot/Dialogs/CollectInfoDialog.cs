@@ -38,11 +38,14 @@ namespace CityPlusBot
 
         public async Task GetInformation(IDialogContext context)
         {
-            var entity = context.UserData.Get<Entity>(_currentLocationStr) ?? new Entity();
-            if (entity.Type != "Place")
+            Entity entity = null;  
+            if (!context.UserData.TryGetValue<Entity>(_currentLocationStr, out entity))
                 GetLocation(context).Wait();
-            
-            // else...
+            else
+            {
+                // We have a location! 
+                // Confirm that this is where they currently are!
+            }
         }
 
         private async Task GetLocation(IDialogContext context)
@@ -50,6 +53,7 @@ namespace CityPlusBot
 
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
             var prompt = "Where are you? Type or say an address or cross streets so we can find resources nearby.";
+            // TODO: Override 
             var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.None, LocationRequiredFields.StreetAddress | LocationRequiredFields.PostalCode);
            context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
