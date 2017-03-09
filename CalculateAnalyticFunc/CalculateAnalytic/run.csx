@@ -77,6 +77,10 @@ public static async void Run(string myQueueItem, TraceWriter log)
         var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from vision");
 
+        var dataD = JsonConvert.DeserializeObject<Data>(result);
+
+        log.Info(dataD.tags.Count.ToString());
+
         SqlConnection conn2 =new SqlConnection(ConnString);
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
 
@@ -217,3 +221,37 @@ private static async Task<string> GetEmotionData(string imageUri, TraceWriter lo
         log.Info(s);
         return s;
 }
+
+   class Data
+    {
+        public Adult adult {get; set;}
+
+        public List<Tag> tags { get; set; }
+
+        public List<Face> faces { get; set; }
+}
+
+    public class Adult
+    {
+        public bool isAdultContent { get; set; }
+
+        public bool isRacyContent { get; set; }
+
+        public double adultScore { get; set; }
+
+        public double racyScore { get; set; }
+
+
+    }
+
+    public class Face
+    {
+        public int age { get; set; }
+    }
+
+    public class Tag
+    {
+        public string name { get; set; }
+
+        public string confidence { get; set; }
+    }
