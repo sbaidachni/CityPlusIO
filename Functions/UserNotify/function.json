@@ -6,6 +6,9 @@
       "direction": "in",
       "queueName": "userlist",
       "connection": "cityplusstorage_STORAGE"
+    },
+    {
+      "direction":"out"
     }
   ],
   "disabled": true
