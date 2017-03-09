@@ -80,7 +80,7 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
         s=s.Substring(s.IndexOf("\"score\":")+8);
         log.Info(s);
 
-        s=Substring(0,s.IndexOf(','));
+        s=s.Substring(0,s.IndexOf(','));
         log.Info(s);
     }
 
