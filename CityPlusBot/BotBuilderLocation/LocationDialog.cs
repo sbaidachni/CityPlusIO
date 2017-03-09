@@ -8,6 +8,8 @@
     using Connector;
     using Dialogs;
     using Internals.Fibers;
+    using System.Collections.Generic;
+    using FormFlow;
 
     /// <summary>
     /// Represents a dialog that handles retrieving a location from the user.
@@ -107,6 +109,7 @@
         private readonly string apiKey;
         private bool requiredDialogCalled;
         private Location selectedLocation;
+        public enum Neccessities { Food, Shelter, Medicine, Clothes };
 
         /// <summary>
         /// Determines whether this is the root dialog or not.
@@ -194,45 +197,47 @@
         internal override async Task ResumeAfterChildDialogInternalAsync(IDialogContext context, IAwaitable<LocationDialogResponse> result)
         {
             this.selectedLocation = (await result).Location;
-
             await this.TryReverseGeocodeAddress(this.selectedLocation);
+            context.Done(CreatePlace(this.selectedLocation));
+            return;
 
-            if (!this.requiredDialogCalled && this.requiredFields != LocationRequiredFields.None)
-            {
-                this.requiredDialogCalled = true;
-                var requiredDialog = new LocationRequiredFieldsDialog(this.selectedLocation, this.requiredFields, this.ResourceManager);
-                context.Call(requiredDialog, this.ResumeAfterChildDialogAsync);
-            }
-            else
-            {
-                if (this.options.HasFlag(LocationOptions.SkipFinalConfirmation))
-                {
-                    context.Done(CreatePlace(this.selectedLocation));
-                    return;
-                }
+            //if (!this.requiredDialogCalled && this.requiredFields != LocationRequiredFields.None)
+            //{
+            //    this.requiredDialogCalled = true;
+            //    var requiredDialog = new LocationRequiredFieldsDialog(this.selectedLocation, this.requiredFields, this.ResourceManager);
+            //    context.Call(requiredDialog, this.ResumeAfterChildDialogAsync);
+            //}
+            //else
+            //{
+            //    if (this.options.HasFlag(LocationOptions.SkipFinalConfirmation))
+            //    {
+            //        context.Done(CreatePlace(this.selectedLocation));
+            //        return;
+            //    }
 
-                var confirmationAsk = string.Format(
-                    this.ResourceManager.ConfirmationAsk,
-                    this.selectedLocation.GetFormattedAddress(this.ResourceManager.AddressSeparator));
 
-                PromptDialog.Confirm(
-                        context,
-                        async (dialogContext, answer) =>
-                        {
-                            if (await answer)
-                            {
-                                dialogContext.Done(CreatePlace(this.selectedLocation));
-                            }
-                            else
-                            {
-                                await dialogContext.PostAsync(this.ResourceManager.ResetPrompt);
-                                await this.StartAsync(dialogContext);
-                            }
-                        },
-                        confirmationAsk,
-                        retry: this.ResourceManager.ConfirmationInvalidResponse,
-                        promptStyle: PromptStyle.None);
-            }
+            //    var confirmationAsk = string.Format(
+            //        this.ResourceManager.ConfirmationAsk,
+            //        this.selectedLocation.GetFormattedAddress(this.ResourceManager.AddressSeparator));
+
+            //    PromptDialog.Confirm(
+            //            context,
+            //            async (dialogContext, answer) =>
+            //            {
+            //                if (await answer)
+            //                {
+            //                    dialogContext.Done(CreatePlace(this.selectedLocation));
+            //                }
+            //                else
+            //                {
+            //                    await dialogContext.PostAsync(this.ResourceManager.ResetPrompt);
+            //                    await this.StartAsync(dialogContext);
+            //                }
+            //            },
+            //            confirmationAsk,
+            //            retry: this.ResourceManager.ConfirmationInvalidResponse,
+            //            promptStyle: PromptStyle.None);
+            //}
         }
 
         /// <summary>
