@@ -86,9 +86,9 @@ public static async void Run(string myQueueItem, TraceWriter log)
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
 
         commUpdate.Parameters.Add("par2", Convert.ToInt32(dataD.adult.isAdultContent));
-        commUpdate.Parameters.Add("par3", Convert.ToInt32(result.adult.isRacyContent));
-        commUpdate.Parameters.Add("par4", result.adult.adultScore);
-        commUpdate.Parameters.Add("par5", result.adult.racyScore);
+        commUpdate.Parameters.Add("par3", Convert.ToInt32(dataD.adult.isRacyContent));
+        commUpdate.Parameters.Add("par4", dataD.adult.adultScore);
+        commUpdate.Parameters.Add("par5", dataD.adult.racyScore);
 
         log.Info("parameters provided");
 
