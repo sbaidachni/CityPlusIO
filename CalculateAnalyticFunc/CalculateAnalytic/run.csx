@@ -132,7 +132,7 @@ private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWr
     using (var stream = new System.IO.MemoryStream(image))
     {
         IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
-        res=client.AnalyzeImageAsync(stream,visualFeatures:null);
+        res=await client.AnalyzeImageAsync(stream,visualFeatures:null);
     }
 
     return res;
