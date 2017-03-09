@@ -1,5 +1,6 @@
 #r "System.Data"
 #r "Microsoft.Rest.ClientRuntime.dll"
+#r "System.Web"
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -13,6 +14,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System​.Net​.Http​.Headers;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
