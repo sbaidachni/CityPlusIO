@@ -29,10 +29,14 @@ public static async void Run(string myQueueItem, TraceWriter log)
     SqlCommand comm=new SqlCommand("select * from Conversations where ConversationId=@par1",conn);
 
     comm.Parameters.Add(new SqlParameter("par1",queryID));
+    log.Info("Ready to open connection");
     conn.Open();
+    log.Info("Ready to execute a reader");
     var reader=comm.ExecuteReader();
+    log.Info("Before read");
     while(reader.Read())
     {
+        log.Info("Read data");
         if (reader["Text"].ToString().Length>0)
         {
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
