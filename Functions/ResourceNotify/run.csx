@@ -24,6 +24,7 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
         }
     }
 }
+private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
 
 public class Notification
 {
