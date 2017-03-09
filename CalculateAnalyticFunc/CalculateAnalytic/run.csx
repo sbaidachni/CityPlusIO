@@ -42,10 +42,14 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
             var sentiment=await UpdateAnalyticsData(reader["Text"].ToString(), log);
             log.Info($"Service returned: {sentiment}");
-            SqlCommand commUpdate=new SqlCommand("Update Conversations Set sentiment=@par1",conn);
+            SqlConnection conn2=new SqlConnection(ConnString);
+            SqlCommand commUpdate=new SqlCommand("Update Conversations Set sentiment=@par1 where ConversationId=@par2",conn2);
             commUpdate.Parameters.Add("par1",sentiment);
+            commUpdate.Parameters.Add("par2",queryID);
             log.Info("ready to update DB");
+            conn2.Open();
             commUpdate.ExecuteNonQuery();
+            conn2.Close();
             log.Info("Db is updated");
         }
     }
