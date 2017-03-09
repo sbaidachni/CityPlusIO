@@ -112,7 +112,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info("update AttachmentTags table");
             commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
-            conn3.Close();*/
+            conn3.Close();
         }
 
         log.Info("start emotion API");
