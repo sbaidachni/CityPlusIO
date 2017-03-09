@@ -13,6 +13,7 @@ namespace CityPlusBot
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
+        const string _currentLocationStr = "CurrentLocation";
         //public List<Entity> _entities = new List<Entity>();
         // Location
         // User Identified Information (For sending notifications)
@@ -37,7 +38,9 @@ namespace CityPlusBot
 
         public async Task GetInformation(IDialogContext context)
         {
-            GetLocation(context).Wait();
+            var entity = context.UserData.Get<Entity>(_currentLocationStr) ?? new Entity();
+            if (entity.Type != "Place")
+                GetLocation(context).Wait();
             
             // else...
         }
@@ -46,7 +49,7 @@ namespace CityPlusBot
         {
 
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
-            var prompt = "Where are you? Type or say an address so we can find resources nearby.";
+            var prompt = "Where are you? Type or say an address or cross streets so we can find resources nearby.";
             var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.None, LocationRequiredFields.StreetAddress | LocationRequiredFields.PostalCode);
            context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
@@ -66,7 +69,7 @@ namespace CityPlusBot
                         address.Country
                     }.Where(x => !string.IsNullOrEmpty(x)));
 
-                await context.PostAsync("Thanks, I will find resources near " + formattedAddress);
+                await context.PostAsync("Thanks! I will find resources near " + formattedAddress);
             }
 
             var entity = new Entity();
@@ -75,7 +78,9 @@ namespace CityPlusBot
                 Geo = place.GetGeoCoordinates()
             });
 
+            context.UserData.SetValue(_currentLocationStr,entity);
             //entities.Add(entity);
+
 
             context.Done<string>(null);
         }
