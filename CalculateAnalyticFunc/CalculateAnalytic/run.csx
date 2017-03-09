@@ -43,6 +43,11 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
             var sentiment=await UpdateAnalyticsData(reader["Text"].ToString(), log);
             log.Info($"Service returned: {sentiment}");
+            SqlCommand commUpdate=new SqlCommand("Update Conversations Set sentiment=@par1",conn);
+            commUpdate.Parameters.Add("par1",sentiment);
+            log.Info("ready to update DB");
+            commUpdate.ExecuteNonQuery();
+            log.Info("Db is updated");
         }
     }
     conn.Close();
