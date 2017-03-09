@@ -25,6 +25,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
     log.Info($"C# Queue trigger function processed: {myQueueItem}");
 
     int queryID=int.Parse(myQueueItem);
+    log.Info(ConnString);
     SqlConnection conn=new SqlConnection(ConnString);
     SqlCommand comm=new SqlCommand("select * from Conversations where ConversationId=@par1",conn);
 
