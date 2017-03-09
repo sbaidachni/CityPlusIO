@@ -8,7 +8,8 @@
       "methods": [
         "POST",
         "UPDATE"
-      ]
+      ],
+      "route":"/"
     },
     {
       "name": "message",
