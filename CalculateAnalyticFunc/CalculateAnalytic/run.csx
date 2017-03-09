@@ -217,7 +217,7 @@ catch(Exception ex)
     {
         log.Info("start call");
         IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
-        res=await client.AnalyzeImageAsync(stream,visualFeatures:null);
+        res=await client.AnalyzeImageAsync(stream,new string[]{"Adult","Faces","Tags"});
     }
     log.Info("image done");
     }
