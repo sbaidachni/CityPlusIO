@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
@@ -32,7 +33,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         if (reader["Text"].ToString().Length>0)
         {
             log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
-            var sentiment=await UpdateAnalyticsData();
+            var sentiment=await UpdateAnalyticsData(reader["Text"].ToString());
             log.Info($"Service returned: {sentiment}");
         }
     }
