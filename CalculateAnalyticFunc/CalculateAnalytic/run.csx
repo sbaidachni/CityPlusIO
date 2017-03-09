@@ -100,6 +100,8 @@ public static async void Run(string myQueueItem, TraceWriter log)
         conn2.Close();
 
 
+if (dataD.tags!=null)
+{
         foreach (var tag in dataD.tags)
         {
             SqlConnection conn3 = new SqlConnection(ConnString);
@@ -114,11 +116,14 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info("AttachmentTag is updated");
             conn3.Close();
         }
+}
 
-        log.Info("start emotion API");
-        var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
-        log.Info("get results from emotion");
-
+        if (dataD.faces!=null)
+        {
+            log.Info("start emotion API");
+            var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
+            log.Info("get results from emotion");
+        }
     }
     conn.Close();
     log.Info("Analytics is done");
