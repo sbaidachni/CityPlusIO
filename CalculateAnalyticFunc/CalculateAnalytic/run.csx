@@ -13,11 +13,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-private const string ConnString = System.Environment.GetEnvironmentVariable("ConnString", EnvironmentVariableTarget.Process);
-private const string cityplusstorage_STORAGE = System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process);
-
 public static async void Run(string myQueueItem, TraceWriter log)
 {
+    string ConnString = System.Environment.GetEnvironmentVariable("ConnString", EnvironmentVariableTarget.Process);
+    string cityplusstorage_STORAGE = System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process);
+
     log.Info($"C# Queue trigger function processed: {myQueueItem}");
     log.Info(ConnString);
     log.Info(cityplusstorage_STORAGE);
@@ -33,7 +33,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
     {
         if (reader["Text"].ToString().Length>0)
         {
-            UpdateAnalyticsData().Wait();
+            await UpdateAnalyticsData();
         }
     }
     conn.Close();
