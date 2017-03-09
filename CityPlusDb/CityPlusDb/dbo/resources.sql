@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[PersonAsked]
 (
-	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
+	[Id] uniqueidentifier NOT NULL PRIMARY KEY IDENTITY DEFAULT NEWID(), 
     [Description] NVARCHAR(MAX) NULL, 
     [Quantity] INT NOT NULL DEFAULT 0, 
     [Category] NVARCHAR(255) NOT NULL DEFAULT 'unknown',
