@@ -74,7 +74,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
     while(reader.Read())
     {
         log.Info("get an attachment info");
-        var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
+        //var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from vision");
 
         SqlConnection conn2 =new SqlConnection(ConnString);
@@ -115,6 +115,10 @@ public static async void Run(string myQueueItem, TraceWriter log)
             log.Info("AttachmentTag is updated");
             conn3.Close();
         }*/
+
+        log.Info("get an attachment info");
+        var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
+        log.Info("get results from vision");
     }
     conn.Close();
     log.Info("Vision API is done");
@@ -163,8 +167,6 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 
 private static async Task<string> GetVisionData(string imageUri, TraceWriter log)
 {
-
-
         log.Info("test");
         var client = new HttpClient();
         var queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -184,14 +186,43 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
         log.Info("test");
         using (var content = new ByteArrayContent(image))
         {
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             response = await client.PostAsync(uri, content);
             log.Info("test");
             
         }
         string s=await response.Content.ReadAsStringAsync();
         
+        log.Info(s);
+        return s;
+}
 
-    log.Info(s);
-    return s;
+private static async Task<string> GetEmotionData(string imageUri, TraceWriter log)
+{
+        log.Info("test");
+        var client = new HttpClient();
+
+        // Request headers
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("emotionAPI", EnvironmentVariableTarget.Process));
+
+        // Request parameters
+        var uri = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
+
+        HttpResponseMessage response;
+        var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
+         log.Info("test");
+        var image = container.Get(imageUri).Result;
+
+        log.Info("test");
+        using (var content = new ByteArrayContent(image))
+        {
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            response = await client.PostAsync(uri, content);
+            log.Info("test");
+            
+        }
+        string s=await response.Content.ReadAsStringAsync();
+        
+        log.Info(s);
+        return s;
 }
