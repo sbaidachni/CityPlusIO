@@ -68,7 +68,7 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
     {
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         response = await client.PostAsync(uri, content);
-        log.Info(response.Content.ToString());
+        log.Info(await response.Content.ReadAsStringAsync());
     }
 
     return ret;
