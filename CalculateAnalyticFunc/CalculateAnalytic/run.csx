@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System​.Net​.Http​.Headers;
+using System.Text;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
