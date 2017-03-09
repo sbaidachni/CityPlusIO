@@ -112,9 +112,9 @@ namespace CityPlusBot.Dialogs
                         address.Region,
                         address.PostalCode,
                         address.Country
-                    }.Where(x => !string.IsNullOrEmpty(x)));
-
-                await context.PostAsync("Thanks! I will find resources near " + formattedAddress);
+                }.Where(x => !string.IsNullOrEmpty(x)));
+                await BuildFormFlow(context);
+                //await context.PostAsync("Thanks! I will find resources near " + formattedAddress);
             }
 
             var geoLocationEntity = new Entity();
@@ -123,6 +123,11 @@ namespace CityPlusBot.Dialogs
             context.UserData.SetValue(_currentLocationStr,geoLocationEntity);
             
             context.Done<string>(null);
+        }
+
+        private async Task BuildFormFlow(IDialogContext context)
+        {
+
         }
     }
 }
