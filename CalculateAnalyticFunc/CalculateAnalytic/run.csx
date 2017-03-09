@@ -122,7 +122,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
         dynamic data = JObject.Parse(emotionResult);
         foreach(var el in data)
         {
-            info.Log("Help");
+            log.Info("Help");
         }
     }
     conn.Close();
