@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Person]
 (
-	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
+	[Id] uniqueidentifier NOT NULL PRIMARY KEY IDENTITY DEFAULT NEWID(),
 	[Location] geography NOT NULL, 
     [Channel] NVARCHAR(50) NULL, 
     [AccountID] NVARCHAR(255) NULL, 
