@@ -188,7 +188,7 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
             content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             response = await client.PostAsync(uri, content);
         
-            log.Info(s);
+            
         }
         s=await response.Content.ReadAsStringAsync();
         
@@ -197,5 +197,6 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
     {
         log.Info(ex.Message);
     }
+    log.Info(s);
     return s;
 }
