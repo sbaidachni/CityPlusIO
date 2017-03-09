@@ -1,3 +1,5 @@
+#load "entities.csx"
+
 #r "Newtonsoft.Json"
 
 using System;
@@ -8,30 +10,20 @@ public static async Task Run(HttpRequestMessage req, out string message, TraceWr
 {
     log.Info($"I just want to see Log Log: {message}");
 
-    // Get request body
-    var data = await req.Content.ReadAsAsync<Resource>();
+    // var data = await req.Content.ReadAsAsync<Resource>();
 
-    var connectionString = Env("cityplus_SQLDatabase");
-    var insert = $"INSERT INTO resources ([description], [quantity], [category], [location]) VALUES ('{data.description}', {data.quantity}, '{data.category}', geography::Point({data.latitude}, {data.longitude}, 4326))";
+    // var connectionString = Env("cityplus_SQLDatabase");
+    // var insert = $"INSERT INTO resources ([description], [quantity], [category], [location]) VALUES ('{data.description}', {data.quantity}, '{data.category}', geography::Point({data.latitude}, {data.longitude}, 4326))";
     
-    log.Info($"I just want to see Log Log: {insert}");
+    // log.Info($"I just want to see Log Log: {insert}");
     
-    using (var connection = new SqlConnection(connectionString))
-    {
-        var executor = new Executor(connection);
-        await executor.NonQuery(insert);
-    }
+    // using (var connection = new SqlConnection(connectionString))
+    // {
+    //     var executor = new Executor(connection);
+    //     await executor.NonQuery(insert);
+    // }
 
-    message = JsonConvert.SerializeObject(data);
-}
-
-public class Resource
-{
-    public string description;
-    public string category;
-    public int quantity;
-    public decimal latitude;
-    public decimal longitude;
+    // message = JsonConvert.SerializeObject(data);
 }
 
 private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
