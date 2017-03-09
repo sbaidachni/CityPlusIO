@@ -100,20 +100,20 @@ public static async void Run(string myQueueItem, TraceWriter log)
         conn2.Close();
 
 
-        /*foreach (var tag in result.Tags)
+        foreach (var tag in dataD.tags)
         {
             SqlConnection conn3 = new SqlConnection(ConnString);
             SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
             commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
-            commInsert.Parameters.Add("par2", tag.Name);
-            commInsert.Parameters.Add("par3", tag.Confidence);
+            commInsert.Parameters.Add("par2", tag.name);
+            commInsert.Parameters.Add("par3", tag.confidence);
 
             conn3.Open();
             log.Info("update AttachmentTags table");
             commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
             conn3.Close();
-        }*/
+        }
 
         log.Info("start emotion API");
         var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
@@ -248,5 +248,5 @@ private static async Task<string> GetEmotionData(string imageUri, TraceWriter lo
     {
         public string name { get; set; }
 
-        public string confidence { get; set; }
+        public double confidence { get; set; }
     }
