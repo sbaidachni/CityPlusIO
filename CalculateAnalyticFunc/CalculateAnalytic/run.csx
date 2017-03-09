@@ -25,7 +25,6 @@ public static async void Run(string myQueueItem, TraceWriter log)
     log.Info($"C# Queue trigger function processed: {myQueueItem}");
 
     int queryID=int.Parse(myQueueItem);
-    log.Info(ConnString);
     SqlConnection conn=new SqlConnection(ConnString);
     SqlCommand comm=new SqlCommand("select * from Conversations where ConversationId=@par1",conn);
 
@@ -82,6 +81,8 @@ private static async Task<double> UpdateAnalyticsData(string text, TraceWriter l
 
         s=s.Substring(0,s.IndexOf(','));
         log.Info(s);
+
+        ret=double.Parse(s);
     }
 
     return ret;
