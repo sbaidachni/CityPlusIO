@@ -51,13 +51,18 @@ private static async Task<double> UpdateAnalyticsData(string text)
     var uri = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + queryString;
     
     HttpResponseMessage response;
+    string body = $"{{\"documents\": [{{\"language\": \"en\",\"id\": \"1\",\"text\": \"{ text}\"}}]}}";
+    log.Info(body);
+    byte[] byteData = Encoding.UTF8.GetBytes(body);
 
-    // Request body
-    byte[] byteData = Encoding.UTF8.GetBytes("{body}");
+    double ret=0;
 
     using (var content = new ByteArrayContent(byteData))
     {
-        content.Headers.ContentType = new MediaTypeHeaderValue("< your content type, i.e. application/json >");
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         response = await client.PostAsync(uri, content);
+        log.Info(response.ToString());
     }
+
+    return ret;
 }
