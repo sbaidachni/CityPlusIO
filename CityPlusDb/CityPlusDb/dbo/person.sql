@@ -1,9 +1,0 @@
-﻿CREATE TABLE [dbo].[Person]
-(
-	[Id] uniqueidentifier NOT NULL PRIMARY KEY IDENTITY DEFAULT NEWID(),
-	[Location] geography NOT NULL, 
-    [Channel] NVARCHAR(50) NULL, 
-    [AccountID] NVARCHAR(255) NULL, 
-    [AccountName] NVARCHAR(255) NULL, 
-    [ClientNotificationUri] NVARCHAR(MAX) NULL 
-)
