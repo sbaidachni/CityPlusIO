@@ -169,6 +169,42 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 
 private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
+
+try
+{
+            var client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+            // Request headers
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
+
+            // Request parameters
+            //queryString["visualFeatures"] = "Categories";
+            //queryString["details"] = "{string}";
+            //queryString["language"] = "en";
+            var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
+
+            HttpResponseMessage response;
+            var container1 = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
+    
+            var image1 = container1.Get(imageUri).Result;
+
+            // Request body
+            byte[] byteData = Encoding.UTF8.GetBytes(image1);
+
+            using (var content = new ByteArrayContent(byteData))
+            {
+               content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+               response = await client.PostAsync(uri, content);
+               string s=await response.Content.ReadAsStringAsync();
+        log.Info(s);
+            }
+}
+catch(Exception ex)
+{
+    log.Info(ex.Message);
+}
+
     AnalysisResult res=null;
     try
     {
