@@ -1,8 +1,8 @@
 #r "System.Data"
 #r "Microsoft.Rest.ClientRuntime.dll"
 #r "System.Web"
-#r Newtonsoft.Json.dll
-#r Microsoft.ProjectOxford.Vision.dll
+#r "Newtonsoft.Json.dll
+#r "Microsoft.ProjectOxford.Vision.dll"
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -69,7 +69,7 @@ public static async void Run(string myQueueItem, TraceWriter log)
     var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
     while(reader.Read())
     {
-        log.Info("get an attachment info")
+        log.Info("get an attachment info");
         var image = container.Get(reader["ContentUrl"].ToString()).Result;
         log.Info(image.ToString());
 
