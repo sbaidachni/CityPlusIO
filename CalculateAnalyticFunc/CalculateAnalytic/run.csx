@@ -23,6 +23,7 @@ using System.IO;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Vision.Contract;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
