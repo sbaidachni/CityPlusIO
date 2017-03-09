@@ -26,7 +26,7 @@ public class Resource
     public string category;
     public int quantity;
     public decimal latitude;
-    public decimal latitude;
+    public decimal longitude;
 }
 
 private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
