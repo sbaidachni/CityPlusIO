@@ -6,7 +6,7 @@
       "direction": "in",
       "authLevel": "function",
       "methods": [ "POST" ],
-      "route":"/"
+      "route":"/resource"
     },
     {
       "name": "message",
