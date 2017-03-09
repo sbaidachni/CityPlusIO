@@ -23,6 +23,8 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
             output.Add(JsonConvert.Serialize(new Notification() {
                 channelId = user.channelId
                 , resourceDescription = data.description
+                , resourceLatitude = data.latitude
+                , resourceLongitude = data.longitude
             }));
         }
     }
@@ -33,6 +35,8 @@ public class Notification
 {
     public string channelId;
     public string resourceDescription;
+    public decimal resourceLatitude;
+    public decimal resourceLongitude;
 }
 
 public class User
