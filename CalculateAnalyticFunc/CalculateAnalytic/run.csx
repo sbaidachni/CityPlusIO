@@ -184,7 +184,7 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
         log.Info("test");
         using (var content = new ByteArrayContent(image))
         {
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response = await client.PostAsync(uri, content);
             log.Info("test");
             
