@@ -163,10 +163,10 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 private static async Task<string> GetVisionData(string imageUri, TraceWriter log)
 {
 
-    string s;
+    string s="";
     try
     {
-`       var client = new HttpClient();
+        var client = new HttpClient();
         var queryString = HttpUtility.ParseQueryString(string.Empty);
 
         // Request headers
