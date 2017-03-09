@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System​.Net​.Http​.Headers;
 using System.Text;
+using Microsoft.ProjectOxford.Vision;
+using Microsoft.ProjectOxford.Vision.Contract;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
@@ -61,23 +63,24 @@ public static async void Run(string myQueueItem, TraceWriter log)
     log.Info("Text Analytics is finished");
 
     //Vision API (Tags)
-    comm=new SqlCommand("select * from Attachments where ConversationId=@par1",conn);
+    comm=new SqlCommand("select * from Attachments where ConversationId=@par1 and CHARINDEX('image',ContentType)>0",conn);
     comm.Parameters.Add("par1",queryID);
     conn.Open();
     log.Info("Ready to execute command");
     reader=comm.ExecuteReader();
-    var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
     while(reader.Read())
     {
         log.Info("get an attachment info");
-        var image = container.Get(reader["ContentUrl"].ToString()).Result;
-        log.Info(image.ToString());
+        var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
 
     }
     conn.Close();
     log.Info("Vision API is done");
 
     //Emotion API
+
+
+    var emotionKey=System.Environment.GetEnvironmentVariable("emotionAPI", EnvironmentVariableTarget.Process);
 }
 
 private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
@@ -116,7 +119,19 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
     return ret;
 }
 
-private static async Task GetVisionData(string imageUri, TraceWriter log)
+private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
+    var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
+    
+    var image = container.Get(reader["ContentUrl"].ToString()).Result;  
 
+    AnalysisResult res=null;
+
+    using (var stream = new System.IO.MemoryStream(image))
+    {
+        IVisionServiceClient client = new VisionServiceClient(System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
+        res=client.AnalyzeImageAsync(stream);
+    }
+
+    return res;
 }
