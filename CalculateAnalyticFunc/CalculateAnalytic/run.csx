@@ -3,6 +3,7 @@
 #r "System.Web"
 #r "Newtonsoft.Json.dll"
 #r "Microsoft.ProjectOxford.Vision.dll"
+#r "System.IO"
 
 // 8.0.1 for net45
 #r "Microsoft.WindowsAzure.Storage.dll"
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System​.Net​.Http​.Headers;
 using System.Text;
+using System.IO;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Vision.Contract;
 
@@ -121,7 +123,7 @@ private static async Task<double> GetAnalyticsData(string text, TraceWriter log)
 
 private static async Task<AnalysisResult> GetVisionData(string imageUri, TraceWriter log)
 {
-    var container = new King.Azure.Data.Container("images", cityplusstorage_STORAGE);
+    var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
     
     var image = container.Get(reader["ContentUrl"].ToString()).Result;  
 
