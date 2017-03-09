@@ -2,7 +2,8 @@
   "frameworks": {
     "net46":{
       "dependencies": {
-        "Newtonsoft.Json": "8.0.3"
+        "Newtonsoft.Json": "8.0.3",
+        "King.Mapper":"2.0.3"
       }
     }
    }
