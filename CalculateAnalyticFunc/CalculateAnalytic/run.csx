@@ -19,8 +19,6 @@ public static async void Run(string myQueueItem, TraceWriter log)
     string cityplusstorage_STORAGE = System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process);
 
     log.Info($"C# Queue trigger function processed: {myQueueItem}");
-    log.Info(ConnString);
-    log.Info(cityplusstorage_STORAGE);
 
     int queryID=int.Parse(myQueueItem);
     SqlConnection conn=new SqlConnection(ConnString);
@@ -33,28 +31,33 @@ public static async void Run(string myQueueItem, TraceWriter log)
     {
         if (reader["Text"].ToString().Length>0)
         {
-            await UpdateAnalyticsData();
+            log.Info($"Ready for TextAnalitycs API: {reader["Text"].ToString()}");
+            var sentiment=await UpdateAnalyticsData();
+            log.Info($"Service returned: {sentiment}");
         }
     }
     conn.Close();
 }
 
-private static async Task UpdateAnalyticsData()
+private static async Task<double> UpdateAnalyticsData(string text)
 {
-    /*var client = new HttpClient();
+    var client = new HttpClient();
     var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "{subscription key}");
+    string subscriptionKey=
 
-    var uri = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize?" + queryString;
+    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("textAnalytics", EnvironmentVariableTarget.Process););
 
+    var uri = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + queryString;
+    
     HttpResponseMessage response;
 
+    // Request body
     byte[] byteData = Encoding.UTF8.GetBytes("{body}");
 
     using (var content = new ByteArrayContent(byteData))
     {
         content.Headers.ContentType = new MediaTypeHeaderValue("< your content type, i.e. application/json >");
         response = await client.PostAsync(uri, content);
-    }*/
+    }
 }
