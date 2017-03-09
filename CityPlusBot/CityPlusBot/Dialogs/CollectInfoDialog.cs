@@ -26,6 +26,7 @@ namespace CityPlusBot.Dialogs
         {
             context.Wait(Introduction);
         }
+
         public async Task Introduction(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
@@ -88,6 +89,7 @@ namespace CityPlusBot.Dialogs
                 context.Wait(this.MessageReceived);
             }
         }*/
+
         private async Task GetLocation(IDialogContext context)
         {
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
@@ -120,8 +122,6 @@ namespace CityPlusBot.Dialogs
 
             context.UserData.SetValue(_currentLocationStr,geoLocationEntity);
             
-
-
             context.Done<string>(null);
         }
     }

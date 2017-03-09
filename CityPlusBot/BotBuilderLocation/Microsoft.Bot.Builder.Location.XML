@@ -831,7 +831,7 @@
         </member>
         <member name="P:Microsoft.Bot.Builder.Location.Resources.Strings.ConfirmationAsk">
             <summary>
-              Looks up a localized string similar to OK, I will ship to {0}. Is that correct? Enter &apos;yes&apos; or &apos;no&apos;..
+              Looks up a localized string similar to OK, I will find resources near {0}. Is that correct? Enter &apos;yes&apos; or &apos;no&apos;..
             </summary>
         </member>
         <member name="P:Microsoft.Bot.Builder.Location.Resources.Strings.ConfirmationInvalidResponse">
