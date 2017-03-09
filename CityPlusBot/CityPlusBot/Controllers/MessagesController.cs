@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace CityPlusBot
-{ 
+{
+    using Dialogs;
     using Activity = Microsoft.Bot.Connector.Activity;
 
     [BotAuthentication]

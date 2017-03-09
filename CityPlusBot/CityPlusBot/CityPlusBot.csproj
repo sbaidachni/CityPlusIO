@@ -53,10 +53,6 @@
       <HintPath>..\packages\Microsoft.Bot.Builder.3.3.0\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Bot.Builder.Location, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.Location.1.2.0\lib\net46\Microsoft.Bot.Builder.Location.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Bot.Connector, Version=3.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Builder.3.3.0\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
       <Private>True</Private>
@@ -133,6 +129,12 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BotBuilderLocation\BotBuilderLocation.csproj">
+      <Project>{3CC3A7F1-CB7C-4C05-86EA-70B99C113FAD}</Project>
+      <Name>BotBuilderLocation</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
