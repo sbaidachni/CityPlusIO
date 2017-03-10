@@ -55,6 +55,39 @@
             await GetInformation(context);
         }
 
+        private static double DegreesToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180.0;
+        }
+
+        public static double CalculateDistance(double? lon1, double? lat1, double? lon2, double? lat2)
+        {
+            double circumference = 40000.0; // Earth's circumference at the equator in km
+            double distance = 0.0;
+
+            //Calculate radians
+            double latitude1Rad = DegreesToRadians(lat1.Value);
+            double longitude1Rad = DegreesToRadians(lon1.Value);
+            double latititude2Rad = DegreesToRadians(lat2.Value);
+            double longitude2Rad = DegreesToRadians(lon2.Value);
+
+            double logitudeDiff = Math.Abs(longitude1Rad - longitude2Rad);
+
+            if (logitudeDiff > Math.PI)
+            {
+                logitudeDiff = 2.0 * Math.PI - logitudeDiff;
+            }
+
+            double angleCalculation =
+                Math.Acos(
+                  Math.Sin(latititude2Rad) * Math.Sin(latitude1Rad) +
+                  Math.Cos(latititude2Rad) * Math.Cos(latitude1Rad) * Math.Cos(logitudeDiff));
+
+            distance = circumference * angleCalculation / (2.0 * Math.PI);
+
+            return distance;
+        }
+
         public async Task GetInformation(IDialogContext context)
         {
             // First we always need the address!
@@ -90,8 +123,10 @@
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
 
-                var geo = location.GetGeoCoordinates();
-
+                //var geo = location.GetGeoCoordinates();
+                //double? lat = geo.Latitude;
+                //double? lon = geo.Longitude;
+                
                 
                
                 /*var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
@@ -105,11 +140,9 @@
                 }*/
 
                 //var point = DbGeography.FromGml($"'POINT({location.Geo.longitude} {location.Geo.latitude})'");
-                var resources = (from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
-                                //where a.Location.Distance(point)<=1000
-                                //where DbGeography::STGeomFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326).STDistance(latlong) <= 10000
-                                select a).Take(3);
-
+                var res = (from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
+                                select a);
+                var resources = (from b in res select b).Take(3);
 
                 // Return the results!
                 if (resources != null && resources.Count() > 0)
