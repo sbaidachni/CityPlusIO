@@ -5,6 +5,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Configuration;
+using King.Mapper;
+using King.Mapper.Data;
+using System.Data.Sql;
+using System.Data.SqlClient;
 
 namespace CityPlusBot.Dialogs
 {
@@ -75,16 +79,28 @@ namespace CityPlusBot.Dialogs
             {
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
-                // Save the user information
 
-                // Query the database
+                var connectionString = "SAD PERSON";
+                var select = $"SELCT";
+                var insert = "";
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    // Save the user information
+                    var executor = new Executor(connection);
+                    await executor.NonQuery(insert);
 
+
+                    // Query the database
+                    var reader = await executor.DataReader(select);
+
+                    var users = reader.Models<Resource>();
+
+                }
                 // Return the results!
 
                 // Check if they want to subscribe for notifications...
                 await context.PostAsync("We have all the relevant information and will notify you know when resources near you become available.");
             }
-
         }
 
         private async Task OnLocationCheck(IDialogContext context, IAwaitable<bool> result)
