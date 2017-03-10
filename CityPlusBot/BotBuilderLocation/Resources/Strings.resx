@@ -151,7 +151,7 @@
     <value>Say or type a valid address when asked, and I will try to find it using Bing. You can provide the full address information (street no. / name, city, region, postal/zip code, country) or a part of it. If you want to change the address, say or type 'reset'. Finally, say or type 'cancel' to exit without providing an address.</value>
   </data>
   <data name="InvalidLocationResponse" xml:space="preserve">
-    <value>Type or say a number to choose the address, or enter 'cancel' to exit.</value>
+    <value>Sorry I don't understand please select an address.</value>
   </data>
   <data name="InvalidLocationResponseFacebook" xml:space="preserve">
     <value>Tap on Send Location to proceed; type or say cancel to exit.</value>
@@ -163,7 +163,7 @@
     <value>I could not find this address. Please try again.</value>
   </data>
   <data name="MultipleResultsFound" xml:space="preserve">
-    <value>I found these results. Type or say a number to choose the address, or enter 'other' to select another address.</value>
+    <value>I found these results. Please select one.</value>
   </data>
   <data name="OtherComand" xml:space="preserve">
     <value>other</value>

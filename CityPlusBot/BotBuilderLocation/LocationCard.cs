@@ -23,6 +23,30 @@
 
             int i = 1;
 
+            if (locations.Count > 1)
+            {
+                // Include the search again option!
+                var heroCard = new HeroCard
+                {
+                    Subtitle = "Don't see your location?"
+                };
+
+                var image =
+                        new CardImage("https://upload.wikimedia.org/wikipedia/commons/c/cf/A_large_blank_world_map_with_oceans_marked_in_blue.PNG");
+
+                heroCard.Images = new[] { image };
+
+                var action = new CardAction()
+                {
+                    Type = "postBack",
+                    Title = "Search again",
+                    Value = "other"
+                };
+
+                heroCard.Buttons = new List<CardAction>() { action };
+                attachments.Add(heroCard.ToAttachment());
+            }
+
             foreach (var location in locations)
             {
                 string address = locations.Count > 1 ? $"{i}. {location.Address.FormattedAddress}" : location.Address.FormattedAddress;
@@ -40,7 +64,14 @@
 
                     heroCard.Images = new[] { image };
                 }
+                var action = new CardAction()
+                {
+                    Type = "postBack",
+                    Title = "Select Location",
+                    Value = i.ToString()
+                };
 
+                heroCard.Buttons = new List<CardAction>() { action };
                 attachments.Add(heroCard.ToAttachment());
 
                 i++;
@@ -69,5 +100,6 @@
 
             return new List<Attachment> { keyboardCard.ToAttachment() };
         }
+        
     }
 }
