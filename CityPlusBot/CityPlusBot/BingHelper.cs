@@ -16,20 +16,7 @@ namespace CityPlusBot
         private readonly static string FindByPointUrl = $"https://dev.virtualearth.net/REST/v1/Locations/{{0}},{{1}}?form={FormCode}&q=";
         private readonly static string ImageUrlByPoint = $"https://dev.virtualearth.net/REST/V1/Imagery/Map/Road/{{0}},{{1}}/15?form={FormCode}&mapSize=500,280&pp={{0}},{{1}};1;{{2}}&dpi=1&logo=always";
         private readonly static string ImageUrlByBBox = $"https://dev.virtualearth.net/REST/V1/Imagery/Map/Road?form={FormCode}&mapArea={{0}},{{1}},{{2}},{{3}}&mapSize=500,280&pp={{4}},{{5}};1;{{6}}&dpi=1&logo=always";
-
-
-        public static Task<string> GetImageUrlFromLatLong(string apiKey, double latitude, double longitude)
-        {
-            string url = null;
-            var result = await GetLocationsByPointAsync(apiKey, latitude, longitude);
-            var location = result.Locations.FirstOrDefault();
-            if (location != null)
-            {
-                url = GetLocationMapImageUrl(apiKey, location);
-            }
-            return url;
-        }
-
+        
         public async Task<LocationSet> GetLocationsByQueryAsync(string apiKey, string address)
         {
             if (string.IsNullOrEmpty(apiKey))
