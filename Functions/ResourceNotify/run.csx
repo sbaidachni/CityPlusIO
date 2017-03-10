@@ -17,7 +17,7 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
 
     using (var connection = new SqlConnection(connectionString))
     {
-        var reader = await executor.DataReader(select);
+        var reader = await executor.Query(select);
 
         var users = reader.Models<User>();
         foreach (var user in users)

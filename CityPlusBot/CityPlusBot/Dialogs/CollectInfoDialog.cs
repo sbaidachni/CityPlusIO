@@ -1,17 +1,15 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Location;
-using Microsoft.Bot.Connector;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Configuration;
-using King.Mapper;
-using King.Mapper.Data;
-using System.Data.Sql;
-using System.Data.SqlClient;
-
-namespace CityPlusBot.Dialogs
+﻿namespace CityPlusBot.Dialogs
 {
+    using King.Mapper.Data;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Location;
+    using Microsoft.Bot.Connector;
+    using System;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web.Configuration;
+
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
@@ -92,9 +90,9 @@ namespace CityPlusBot.Dialogs
                     await executor.NonQuery(insert);
                     
                     // Query the database
-                    var reader = await executor.DataReader(select);
+                    var reader = await executor.Query(select);
 
-                    var users = reader.Models<Resource>();
+                    var users = reader.Models<CityPlusBot.Resource>();
 
                 }
                 // Return the results!
