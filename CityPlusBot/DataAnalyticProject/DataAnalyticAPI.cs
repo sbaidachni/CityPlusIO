@@ -4,6 +4,7 @@ using System.Data.Spatial;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
 
 namespace DataAnalyticProject
 {
@@ -53,6 +54,18 @@ namespace DataAnalyticProject
             att.ContentUrl = uri;
             db.Attachments.Add(att);
             db.SaveChanges();
+        }
+
+        public static void SubmitQueryForAnalysis(int conversationId)
+        {
+            CloudStorageAccount account = new CloudStorageAccount(new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("cityplusstorage", "cQ4Q29tmbsLR+11W91Tt6IXvu5nPBiBHWkxKTjfHDuBWH8aT9MdWf1a0PjIQj2n6B7arPJa2cMh5TOnmIHC8Fw=="), true);
+            var clientQueue=account.CreateCloudQueueClient();
+            var queue=clientQueue.GetQueueReference("analyticqueue");
+
+            queue.CreateIfNotExists();
+
+            queue.AddMessage(new Microsoft.WindowsAzure.Storage.Queue.CloudQueueMessage(conversationId.ToString()));
+
         }
     }
 
