@@ -92,7 +92,7 @@
 
                // var geo = location.GetGeoCoordinates();
                
-                var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
+                /*var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
 
                 using (var connection = new SqlConnection(WebConfigurationManager.AppSettings["ConnectionString"]))
                 {
@@ -100,22 +100,27 @@
                     var executor = new Executor(connection);
                     await executor.NonQuery(insert);
 
-                }
-                var point = DbGeography.FromGml($"POINT({location.Geo.longitude} {location.Geo.latitude})");
-                var resources = from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
-                                where a.Location.Distance(point)<=1000
+                }*/
+
+                //var point = DbGeography.FromGml($"'POINT({location.Geo.longitude} {location.Geo.latitude})'");
+                var resources = (from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
+                                //where a.Location.Distance(point)<=1000
                                 //where DbGeography::STGeomFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326).STDistance(latlong) <= 10000
-                                select a;
+                                select a).Take(3);
 
 
                 // Return the results!
                 if (resources != null && resources.Count() > 0)
                 {
+
+                        DataAnalyticProject.DataAnalyticAPI.AddResources(sessionId,  resources);
+
                     var attachments = await CreateResourceCards("", resources.ToList());
                     if (attachments.Count() > 0)
                     {
                         var locationsCardReply = context.MakeMessage();
                         locationsCardReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                        locationsCardReply.Attachments=attachments;
                         await context.PostAsync(locationsCardReply);
 
                         await context.PostAsync("We  will notify you know when new resources near you become available.");
@@ -229,19 +234,18 @@
 
                     };
 
+                attachments.Add(heroCard.ToAttachment());
 
-                if ((resource.Location!=null)&&(resource.Location.Latitude != 0 && resource.Location.Longitude != 0))
+
+                /*if (resource.Address!=null)
                 {
                     var helper = new BingHelper();
-                    var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(resource.Location.Latitude), Convert.ToDouble(resource.Location.Longitude));
+                    var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(0), Convert.ToDouble(0));
                     var location = locations.Locations.FirstOrDefault();
 
                     if (location != null)
                     {
                         var image = new CardImage(helper.GetLocationMapImageUrl(apiKey, location));
-
-                        var lat = resource.Location.Latitude;
-                        var lon = resource.Location.Longitude;
 
                         var action = new CardAction()
                         {
@@ -253,7 +257,7 @@
                         heroCard.Images = new[] { image };
                     }
                     
-                }
+                }*/
             }
 
 

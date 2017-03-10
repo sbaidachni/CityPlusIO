@@ -26,7 +26,6 @@ namespace DataAnalyticProject
         public Nullable<int> Shelter { get; set; }
         public Nullable<int> Clothes { get; set; }
         public Nullable<int> Medicine { get; set; }
-        public System.Data.Spatial.DbGeography Location { get; set; }
     
         public virtual ICollection<ResourcesProvided> ResourcesProvideds { get; set; }
     }

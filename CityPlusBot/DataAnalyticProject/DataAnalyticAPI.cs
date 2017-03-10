@@ -27,6 +27,32 @@ namespace DataAnalyticProject
             return ses.SessionId;
         }
 
+        public static void AddResources(int sessionId,IQueryable<Resource> resources)
+        {
+            try
+            {
+                Conversation conv = new Conversation();
+                conv.SessionId = sessionId;
+                conv.Text = "resources provided";
+                conv.UtcDateTime = DateTime.UtcNow;
+
+
+
+                foreach (var r in resources)
+                {
+                    ResourcesProvided res = new ResourcesProvided();
+                    res.ResourceId = r.Id;
+                    conv.ResourcesProvideds.Add(res);
+                }
+                db.Conversations.Add(conv);
+                db.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
         public static int AddConversation(int sessionId, string convText, string address=null, DbGeography geo=null)
         {
             Conversation conv = new Conversation();

@@ -15,7 +15,6 @@ namespace DataAnalyticProject
     public partial class Person
     {
         public long Id { get; set; }
-        public System.Data.Spatial.DbGeography Location { get; set; }
         public string Channel { get; set; }
         public string AccountID { get; set; }
         public string AccountName { get; set; }

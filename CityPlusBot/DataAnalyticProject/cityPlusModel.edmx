@@ -36,7 +36,6 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Location" Type="geography" Nullable="false" />
           <Property Name="Channel" Type="nvarchar" MaxLength="50" />
           <Property Name="AccountID" Type="nvarchar" MaxLength="255" />
           <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
@@ -151,87 +150,21 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="cityplusdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Attachment">
-          <Key>
-            <PropertyRef Name="AttachmentId" />
-          </Key>
-          <Property Name="AttachmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ConversationId" Type="Int32" Nullable="false" />
-          <Property Name="ContentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="isAdultContent" Type="Boolean" />
-          <Property Name="isRacyContent" Type="Boolean" />
-          <Property Name="adultScore" Type="Single" />
-          <Property Name="racyScore" Type="Single" />
-          <NavigationProperty Name="Conversation" Relationship="Self.FK_Attachments_Conversations" FromRole="Attachments" ToRole="Conversations" />
-        </EntityType>
-        <EntityType Name="Conversation">
-          <Key>
-            <PropertyRef Name="ConversationId" />
-          </Key>
-          <Property Name="ConversationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SessionId" Type="Int32" Nullable="false" />
-          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Locale" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="GeoCoordinates" Type="Geography" />
-          <Property Name="UtcDateTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="sentiment" Type="Single" />
-          <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_Conversations" FromRole="Conversations" ToRole="Attachments" />
-          <NavigationProperty Name="Session" Relationship="Self.FK_Conversations_Sessions" FromRole="Conversations" ToRole="Sessions" />
-          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Conversations" FromRole="Conversation" ToRole="ResourcesProvided" />
-        </EntityType>
-        <EntityType Name="Session">
-          <Key>
-            <PropertyRef Name="SessionId" />
-          </Key>
-          <Property Name="SessionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChannelId" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UtcDateTime" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="Conversations" Relationship="Self.FK_Conversations_Sessions" FromRole="Sessions" ToRole="Conversations" />
-        </EntityType>
-        <Association Name="FK_Attachments_Conversations">
-          <End Role="Conversations" Type="Self.Conversation" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Attachments" Type="Self.Attachment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Conversations">
-              <PropertyRef Name="ConversationId" />
-            </Principal>
-            <Dependent Role="Attachments">
-              <PropertyRef Name="ConversationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Conversations_Sessions">
-          <End Role="Sessions" Type="Self.Session" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Conversations" Type="Self.Conversation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Sessions">
-              <PropertyRef Name="SessionId" />
-            </Principal>
-            <Dependent Role="Conversations">
-              <PropertyRef Name="SessionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="cityplusdbEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Attachments" EntityType="Self.Attachment" />
-          <EntitySet Name="Conversations" EntityType="Self.Conversation" />
-          <EntitySet Name="Sessions" EntityType="Self.Session" />
-          <AssociationSet Name="FK_Attachments_Conversations" Association="Self.FK_Attachments_Conversations">
-            <End Role="Conversations" EntitySet="Conversations" />
-            <End Role="Attachments" EntitySet="Attachments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Conversations_Sessions" Association="Self.FK_Conversations_Sessions">
-            <End Role="Sessions" EntitySet="Sessions" />
-            <End Role="Conversations" EntitySet="Conversations" />
-          </AssociationSet>
+          <EntitySet Name="Attachments" EntityType="cityplusdbModel.Attachment" />
+          <EntitySet Name="Conversations" EntityType="cityplusdbModel.Conversation" />
+          <EntitySet Name="People" EntityType="cityplusdbModel.Person" />
           <EntitySet Name="Resources" EntityType="cityplusdbModel.Resource" />
           <EntitySet Name="ResourcesProvideds" EntityType="cityplusdbModel.ResourcesProvided" />
+          <EntitySet Name="Sessions" EntityType="cityplusdbModel.Session" />
+          <AssociationSet Name="FK_Attachments_Conversations" Association="cityplusdbModel.FK_Attachments_Conversations">
+            <End Role="Conversation" EntitySet="Conversations" />
+            <End Role="Attachment" EntitySet="Attachments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Conversations_Sessions" Association="cityplusdbModel.FK_Conversations_Sessions">
+            <End Role="Session" EntitySet="Sessions" />
+            <End Role="Conversation" EntitySet="Conversations" />
+          </AssociationSet>
           <AssociationSet Name="FK_ResourcesProvided_Conversations" Association="cityplusdbModel.FK_ResourcesProvided_Conversations">
             <End Role="Conversation" EntitySet="Conversations" />
             <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
@@ -240,8 +173,47 @@
             <End Role="Resource" EntitySet="Resources" />
             <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
           </AssociationSet>
-          <EntitySet Name="People" EntityType="cityplusdbModel.Person" />
         </EntityContainer>
+        <EntityType Name="Attachment">
+          <Key>
+            <PropertyRef Name="AttachmentId" />
+          </Key>
+          <Property Name="AttachmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ConversationId" Type="Int32" Nullable="false" />
+          <Property Name="ContentType" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContentUrl" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="isAdultContent" Type="Boolean" />
+          <Property Name="isRacyContent" Type="Boolean" />
+          <Property Name="adultScore" Type="Single" />
+          <Property Name="racyScore" Type="Single" />
+          <NavigationProperty Name="Conversation" Relationship="cityplusdbModel.FK_Attachments_Conversations" FromRole="Attachment" ToRole="Conversation" />
+        </EntityType>
+        <EntityType Name="Conversation">
+          <Key>
+            <PropertyRef Name="ConversationId" />
+          </Key>
+          <Property Name="ConversationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SessionId" Type="Int32" Nullable="false" />
+          <Property Name="Text" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Locale" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="GeoCoordinates" Type="Geography" />
+          <Property Name="UtcDateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="sentiment" Type="Single" />
+          <NavigationProperty Name="Attachments" Relationship="cityplusdbModel.FK_Attachments_Conversations" FromRole="Conversation" ToRole="Attachment" />
+          <NavigationProperty Name="Session" Relationship="cityplusdbModel.FK_Conversations_Sessions" FromRole="Conversation" ToRole="Session" />
+          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Conversations" FromRole="Conversation" ToRole="ResourcesProvided" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccountID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ClientNotificationUri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
         <EntityType Name="Resource">
           <Key>
             <PropertyRef Name="Id" />
@@ -253,7 +225,6 @@
           <Property Name="Shelter" Type="Int32" />
           <Property Name="Clothes" Type="Int32" />
           <Property Name="Medicine" Type="Int32" />
-          <Property Name="Location" Type="Geography" />
           <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="Resource" ToRole="ResourcesProvided" />
         </EntityType>
         <EntityType Name="ResourcesProvided">
@@ -266,6 +237,43 @@
           <NavigationProperty Name="Conversation" Relationship="cityplusdbModel.FK_ResourcesProvided_Conversations" FromRole="ResourcesProvided" ToRole="Conversation" />
           <NavigationProperty Name="Resource" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="ResourcesProvided" ToRole="Resource" />
         </EntityType>
+        <EntityType Name="Session">
+          <Key>
+            <PropertyRef Name="SessionId" />
+          </Key>
+          <Property Name="SessionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChannelId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="UtcDateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Conversations" Relationship="cityplusdbModel.FK_Conversations_Sessions" FromRole="Session" ToRole="Conversation" />
+        </EntityType>
+        <Association Name="FK_Attachments_Conversations">
+          <End Type="cityplusdbModel.Conversation" Role="Conversation" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="cityplusdbModel.Attachment" Role="Attachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Conversation">
+              <PropertyRef Name="ConversationId" />
+            </Principal>
+            <Dependent Role="Attachment">
+              <PropertyRef Name="ConversationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Conversations_Sessions">
+          <End Type="cityplusdbModel.Session" Role="Session" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="cityplusdbModel.Conversation" Role="Conversation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Session">
+              <PropertyRef Name="SessionId" />
+            </Principal>
+            <Dependent Role="Conversation">
+              <PropertyRef Name="SessionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ResourcesProvided_Conversations">
           <End Type="cityplusdbModel.Conversation" Role="Conversation" Multiplicity="0..1" />
           <End Type="cityplusdbModel.ResourcesProvided" Role="ResourcesProvided" Multiplicity="*" />
@@ -290,18 +298,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Person">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Location" Type="Geography" Nullable="false" />
-          <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AccountID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ClientNotificationUri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -310,44 +307,45 @@
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="cityplusdbModel.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
-                <ScalarProperty Name="AttachmentId" ColumnName="AttachmentId" />
-                <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
-                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
-                <ScalarProperty Name="ContentUrl" ColumnName="ContentUrl" />
-                <ScalarProperty Name="isAdultContent" ColumnName="isAdultContent" />
-                <ScalarProperty Name="isRacyContent" ColumnName="isRacyContent" />
-                <ScalarProperty Name="adultScore" ColumnName="adultScore" />
                 <ScalarProperty Name="racyScore" ColumnName="racyScore" />
+                <ScalarProperty Name="adultScore" ColumnName="adultScore" />
+                <ScalarProperty Name="isRacyContent" ColumnName="isRacyContent" />
+                <ScalarProperty Name="isAdultContent" ColumnName="isAdultContent" />
+                <ScalarProperty Name="ContentUrl" ColumnName="ContentUrl" />
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
+                <ScalarProperty Name="AttachmentId" ColumnName="AttachmentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Conversations">
             <EntityTypeMapping TypeName="cityplusdbModel.Conversation">
               <MappingFragment StoreEntitySet="Conversations">
-                <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
-                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="Locale" ColumnName="Locale" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="GeoCoordinates" ColumnName="GeoCoordinates" />
-                <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
                 <ScalarProperty Name="sentiment" ColumnName="sentiment" />
+                <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
+                <ScalarProperty Name="GeoCoordinates" ColumnName="GeoCoordinates" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Locale" ColumnName="Locale" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Sessions">
-            <EntityTypeMapping TypeName="cityplusdbModel.Session">
-              <MappingFragment StoreEntitySet="Sessions">
-                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
-                <ScalarProperty Name="ChannelId" ColumnName="ChannelId" />
-                <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
+          <EntitySetMapping Name="People">
+            <EntityTypeMapping TypeName="cityplusdbModel.Person">
+              <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="ClientNotificationUri" ColumnName="ClientNotificationUri" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountID" ColumnName="AccountID" />
+                <ScalarProperty Name="Channel" ColumnName="Channel" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Resources">
             <EntityTypeMapping TypeName="cityplusdbModel.Resource">
               <MappingFragment StoreEntitySet="Resources">
-                <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="Medicine" ColumnName="Medicine" />
                 <ScalarProperty Name="Clothes" ColumnName="Clothes" />
                 <ScalarProperty Name="Shelter" ColumnName="Shelter" />
@@ -367,15 +365,12 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="People">
-            <EntityTypeMapping TypeName="cityplusdbModel.Person">
-              <MappingFragment StoreEntitySet="Person">
-                <ScalarProperty Name="ClientNotificationUri" ColumnName="ClientNotificationUri" />
-                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
-                <ScalarProperty Name="AccountID" ColumnName="AccountID" />
-                <ScalarProperty Name="Channel" ColumnName="Channel" />
-                <ScalarProperty Name="Location" ColumnName="Location" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+          <EntitySetMapping Name="Sessions">
+            <EntityTypeMapping TypeName="cityplusdbModel.Session">
+              <MappingFragment StoreEntitySet="Sessions">
+                <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
+                <ScalarProperty Name="ChannelId" ColumnName="ChannelId" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -394,7 +389,7 @@
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="true" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="UseLegacyProvider" Value="true" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
       </DesignerInfoPropertySet>
