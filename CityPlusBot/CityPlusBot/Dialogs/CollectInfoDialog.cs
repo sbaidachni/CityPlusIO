@@ -258,6 +258,7 @@
 
         public async Task<IList<Attachment>> CreateResourceCards(string apiKey, IList<DataAnalyticProject.Resource> resources)
         {
+            apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
             var attachments = new List<Attachment>();
             foreach (var resource in resources)
             {
@@ -272,10 +273,12 @@
                 attachments.Add(heroCard.ToAttachment());
 
 
-                /*if (resource.Address!=null)
+                if (resource.Address!=null)
                 {
                     var helper = new BingHelper();
-                    var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(0), Convert.ToDouble(0));
+                    double lat=Convert.ToDouble(resource.Lat);
+                    double lon= Convert.ToDouble(resource.Lon);
+                    var locations = await helper.GetLocationsByPointAsync(apiKey, lat, lon);
                     var location = locations.Locations.FirstOrDefault();
 
                     if (location != null)
@@ -292,7 +295,7 @@
                         heroCard.Images = new[] { image };
                     }
                     
-                }*/
+                }
             }
 
 
