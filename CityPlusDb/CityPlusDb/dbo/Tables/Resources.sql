@@ -5,5 +5,7 @@
     [Shelter]  NVARCHAR (50)  NULL,
     [Clothes]  NVARCHAR (50)  NULL,
     [Medicine] NVARCHAR (50)  NULL,
-	[latlong] sys.geography
+	[latlong] sys.geography,
+    [Id]                    BIGINT            IDENTITY (1, 1) NOT NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
 );
