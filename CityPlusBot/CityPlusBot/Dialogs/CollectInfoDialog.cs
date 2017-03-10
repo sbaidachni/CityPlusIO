@@ -82,14 +82,13 @@ namespace CityPlusBot.Dialogs
 
                 var connectionString = "SAD PERSON";
                 var select = $"SELCT";
-                var insert = "";
+                var insert = "INSERT INTO ";
                 using (var connection = new SqlConnection(connectionString))
                 {
                     // Save the user information
                     var executor = new Executor(connection);
                     await executor.NonQuery(insert);
-
-
+                    
                     // Query the database
                     var reader = await executor.DataReader(select);
 
