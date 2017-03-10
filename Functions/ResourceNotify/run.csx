@@ -13,7 +13,7 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
     var data = JsonConvert.DeserializeObject<Resource>(msg);
 
     var connectionString = Env("cityplus_SQLDatabase");
-    var select = $"SELECT [channelId] FROM person WHERE location.geography::Point({data.latitude}, {data.longitude}, 4326) <= 100";
+    var select = $"SELECT [channelId] FROM person WHERE Location.geography::Point({data.latitude}, {data.longitude}, 4326) <= 100";
 
     using (var connection = new SqlConnection(connectionString))
     {

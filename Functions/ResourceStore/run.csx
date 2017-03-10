@@ -13,7 +13,7 @@ public static async Task Run(HttpRequestMessage req, out string message, TraceWr
     var data = await req.Content.ReadAsAsync<Resource>();
 
     var connectionString = Env("cityplus_SQLDatabase");
-    var insert = $"INSERT INTO resources ([description], [quantity], [category], [location]) VALUES ('{data.description}', {data.quantity}, '{data.category}', geography::Point({data.latitude}, {data.longitude}, 4326))";
+    var insert = $"INSERT INTO resources ([description], [quantity], [category], [latlong]) VALUES ('{data.description}', {data.quantity}, '{data.category}', geography::Point({data.latitude}, {data.longitude}, 4326))";
     
     log.Info($"I just want to see Log Log: {insert}");
     
