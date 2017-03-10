@@ -78,6 +78,7 @@
     <Build Include="dbo\Tables\PersonAsked.sql" />
     <Build Include="dbo\Tables\Resources.sql" />
     <Build Include="dbo\Tables\Sessions.sql" />
+    <Build Include="dbo\Tables\Neccessity.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="CityPlusDb.refactorlog" />

@@ -16,12 +16,14 @@
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
+        #region Members
         private static readonly Config config = ConfigurationManager.AppSettings.Map<Config>();
         private const string _checkInTimeStr = "LastCheckInTime";
         private const string _currentLocationStr = "CurrentLocation";
         //private const string _resourceStr = "Resources";
         private bool _locationConfirmed = false;
         //private bool _formConfirmed = false;
+        #endregion
 
         // User Data
         //  - Last Check in time
@@ -81,8 +83,7 @@
             {
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
-
-
+                
                 var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('{location.Geo.Latitude}', '{location.Geo.Longitude}', 4326))";
                 var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resource WHERE Location.geography::Point({location.Geo.Latitude}, {location.Geo.Longitude}, 4326) <= 100";
 
@@ -143,9 +144,9 @@
         */
         private async Task GetLocation(IDialogContext context)
         {
-            var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
+            var apiKey = config.BingMapsApiKey;
             var prompt = "Where are you? We need you location to find resources nearby.";
-            var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.UseNativeControl, LocationRequiredFields.None);
+            var locationDialog = new LocationDialog(apiKey, string.Empty, prompt, LocationOptions.UseNativeControl, LocationRequiredFields.None);
             context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
