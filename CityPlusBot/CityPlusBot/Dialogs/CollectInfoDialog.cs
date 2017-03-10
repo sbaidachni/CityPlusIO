@@ -81,8 +81,10 @@ namespace CityPlusBot.Dialogs
                 // All the relevant information has been collected!
 
                 var connectionString = "SAD PERSON";
-                var select = $"SELCT";
-                var insert = "INSERT INTO ";
+
+                var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('{location.Geo.Latitude}', '{location.Geo.Longitude}', 4326))";
+                var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resource WHERE Location.geography::Point({data.latitude}, {data.longitude}, 4326) <= 100";
+
                 using (var connection = new SqlConnection(connectionString))
                 {
                     // Save the user information

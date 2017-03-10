@@ -1,6 +1,5 @@
 ﻿namespace CityPlusBot.Models
 {
-
     public class Resource
     {
         public string Name;
