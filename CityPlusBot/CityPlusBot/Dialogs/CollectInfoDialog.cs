@@ -13,9 +13,9 @@ namespace CityPlusBot.Dialogs
     {
         private const string _checkInTimeStr = "LastCheckInTime";
         private const string _currentLocationStr = "CurrentLocation";
-        private const string _resourceStr = "Resources";
+        //private const string _resourceStr = "Resources";
         private bool _locationConfirmed = false;
-        private bool _formConfirmed = false;
+        //private bool _formConfirmed = false;
 
         // User Data
         //  - Last Check in time
@@ -45,19 +45,19 @@ namespace CityPlusBot.Dialogs
         {
             // First we always need the address!
             Place location = null;
-            string[] resources = null;
+            //string[] resources = null;
             if (!context.UserData.TryGetValue<Place>(_currentLocationStr, out location))
                 GetLocation(context).Wait();
             else if (!_locationConfirmed)
             {
-                var locationName = location.Name;
+                var locationName = location.Name ?? location.GetPostalAddress()?.FormattedAddress;
                 PromptDialog.Confirm(
                     context,
                     this.OnLocationCheck,
                     $"Are you still at '{locationName}'?",
                     $"Sorry didn't get that! Are you still at '{locationName}' ? ",
                     promptStyle: PromptStyle.Auto);
-            }
+            }/*
             else if (!context.UserData.TryGetValue<string[]>(_resourceStr, out resources))
                 GetResources(context).Wait();
             else if (!_formConfirmed)
@@ -70,11 +70,17 @@ namespace CityPlusBot.Dialogs
                     $"Are looking for {r}?",
                     $"Sorry didn't get that! Are you still looking for {r}? ",
                     promptStyle: PromptStyle.Auto);
-            }
+            }*/
             else
             {
-                // All the relevant information has been collected!
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
+                // All the relevant information has been collected!
+                // Save the user information
+
+                // Query the database
+
+                // Return the results!
+
                 // Check if they want to subscribe for notifications...
                 await context.PostAsync("We have all the relevant information and will notify you know when resources near you become available.");
             }
@@ -98,7 +104,7 @@ namespace CityPlusBot.Dialogs
             }
             await GetInformation(context);
         }
-
+        /*
         private async Task OnFormCheck(IDialogContext context, IAwaitable<bool> result)
         {
             var accepted = (await result);
@@ -116,7 +122,7 @@ namespace CityPlusBot.Dialogs
             }
             await GetInformation(context);
         }
-
+        */
         private async Task GetLocation(IDialogContext context)
         {
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
@@ -125,12 +131,12 @@ namespace CityPlusBot.Dialogs
             context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
-
+/*
         private async Task GetResources(IDialogContext context)
         {
             // Call the form Dialog!
         }
-
+        */
         private async Task ResumeAfterLocationDialogAsync(IDialogContext context, IAwaitable<Place> result)
         {
             var place = await result;
