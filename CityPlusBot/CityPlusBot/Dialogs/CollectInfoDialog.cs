@@ -16,6 +16,7 @@
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
+        private static readonly Config config = ConfigurationManager.AppSettings.Map<Config>();
         private const string _checkInTimeStr = "LastCheckInTime";
         private const string _currentLocationStr = "CurrentLocation";
         //private const string _resourceStr = "Resources";
@@ -80,7 +81,7 @@
             {
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
-                var config = ConfigurationManager.AppSettings.Map<Config>();
+                
 
                 var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('{location.Geo.Latitude}', '{location.Geo.Longitude}', 4326))";
                 var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resource WHERE Location.geography::Point({location.Geo.Latitude}, {location.Geo.Longitude}, 4326) <= 100";
