@@ -1,3 +1,5 @@
+#load "entities.csx"
+
 #r "Newtonsoft.Json"
 
 using System;
@@ -11,7 +13,7 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
     var data = JsonConvert.DeserializeObject<Resource>(msg);
 
     var connectionString = Env("cityplus_SQLDatabase");
-    var select = $"SELECT [channelId] FROM person WHERE location.geography::Point({data.latitude}, {data.longitude}, 4326) <= 100";
+    var select = $"SELECT [channelId] FROM person WHERE Location.geography::Point({data.latitude}, {data.longitude}, 4326) <= 100";
 
     using (var connection = new SqlConnection(connectionString))
     {
@@ -30,25 +32,3 @@ public static async Task Run(string msg, ICollector<string> output, TraceWriter 
     }
 }
 private static string Env(string name) => System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
-
-public class Notification
-{
-    public string channelId;
-    public string resourceDescription;
-    public decimal resourceLatitude;
-    public decimal resourceLongitude;
-}
-
-public class User
-{
-    public string channelId;
-}
-
-public class Resource
-{
-    public string description;
-    public string category;
-    public int quantity;
-    public decimal latitude;
-    public decimal longitude;
-}

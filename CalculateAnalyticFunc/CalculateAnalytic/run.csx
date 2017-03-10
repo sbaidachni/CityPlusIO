@@ -23,6 +23,7 @@ using System.IO;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Vision.Contract;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 public static async void Run(string myQueueItem, TraceWriter log)
 {
@@ -74,22 +75,20 @@ public static async void Run(string myQueueItem, TraceWriter log)
     while(reader.Read())
     {
         log.Info("get an attachment info");
-        //var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
+        var result=await GetVisionData(reader["ContentUrl"].ToString(), log);
         log.Info("get results from vision");
+
+        var dataD = JsonConvert.DeserializeObject<Data>(result);
 
         SqlConnection conn2 =new SqlConnection(ConnString);
         SqlCommand commUpdate=new SqlCommand("UPDATE Attachments SET isAdultContent=@par2, isRacyContent=@par3, adultScore=@par4, racyScore=@par5 WHERE AttachmentId=@par1", conn2);
 
-        /*dynamic data = JObject.Parse(result);
-
-        log.Info(data.adult.IsAdultContent.ToString()); 
-
         commUpdate.Parameters.Add("par1", reader["AttachmentId"].ToString());
 
-        commUpdate.Parameters.Add("par2", Convert.ToInt32(result.Adult.IsAdultContent));
-        commUpdate.Parameters.Add("par3", Convert.ToInt32(result.Adult.IsRacyContent));
-        commUpdate.Parameters.Add("par4", result.Adult.AdultScore);
-        commUpdate.Parameters.Add("par5", result.Adult.RacyScore);
+        commUpdate.Parameters.Add("par2", Convert.ToInt32(dataD.adult.isAdultContent));
+        commUpdate.Parameters.Add("par3", Convert.ToInt32(dataD.adult.isRacyContent));
+        commUpdate.Parameters.Add("par4", dataD.adult.adultScore);
+        commUpdate.Parameters.Add("par5", dataD.adult.racyScore);
 
         log.Info("parameters provided");
 
@@ -98,29 +97,59 @@ public static async void Run(string myQueueItem, TraceWriter log)
         log.Info("update Attachments table");
         commUpdate.ExecuteNonQuery();
         log.Info("Attachment is updated");
-        conn2.Close();*/
+        conn2.Close();
 
 
-        /*foreach (var tag in result.Tags)
+if (dataD.tags!=null)
+{
+        foreach (var tag in dataD.tags)
         {
             SqlConnection conn3 = new SqlConnection(ConnString);
-            SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn2);
+            SqlCommand commInsert = new SqlCommand("INSERT INTO AttachmentTags (AttachmentId, name, confidence) VALUES (@par1, @par2, @par3)", conn3);
             commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
-            commInsert.Parameters.Add("par2", tag.Name);
-            commInsert.Parameters.Add("par3", tag.Confidence);
+            commInsert.Parameters.Add("par2", tag.name);
+            commInsert.Parameters.Add("par3", tag.confidence);
 
             conn3.Open();
             log.Info("update AttachmentTags table");
             commInsert.ExecuteNonQuery();
             log.Info("AttachmentTag is updated");
             conn3.Close();
-        }*/
+        }
+}
 
-        log.Info("start emotion API");
-        var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
-        log.Info("get results from emotion");
-        dynamic data = JObject.Parse(emotionResult);
-        log.Info(data.Length.ToString());
+        if (dataD.faces!=null)
+        {
+            log.Info("start emotion API");
+            var emotionResult=await GetEmotionData(reader["ContentUrl"].ToString(), log);
+            log.Info("get results from emotion");
+
+            var dataE = JsonConvert.DeserializeObject<FaceData[]>(emotionResult);
+            foreach(var face in dataE)
+            {
+                SqlConnection conn3 = new SqlConnection(ConnString);
+                SqlCommand commInsert = new SqlCommand("INSERT INTO Faces (AttachmentId, heightSize, leftSize, topSize,widthSize, anger, contempt, disgust, fear, happiness, neutral, sadness, surprise) VALUES (@par1, @par2, @par3, @par4, @par5, @par6, @par7, @par8, @par9, @par10, @par11, @par12, @par13)", conn3);
+                commInsert.Parameters.Add("par1", reader["AttachmentId"].ToString());
+                commInsert.Parameters.Add("par2", face.faceRectangle.height);
+                commInsert.Parameters.Add("par3", face.faceRectangle.left);
+                commInsert.Parameters.Add("par4", face.faceRectangle.top);
+                commInsert.Parameters.Add("par5", face.faceRectangle.width);
+                commInsert.Parameters.Add("par6", face.scores.anger);
+                commInsert.Parameters.Add("par7", face.scores.contempt);
+                commInsert.Parameters.Add("par8", face.scores.disgust);
+                commInsert.Parameters.Add("par9", face.scores.fear);
+                commInsert.Parameters.Add("par10", face.scores.happiness);
+                commInsert.Parameters.Add("par11", face.scores.neutral);
+                commInsert.Parameters.Add("par12", face.scores.sadness);
+                commInsert.Parameters.Add("par13", face.scores.surprise);
+
+                conn3.Open();
+                log.Info("update Faces table");
+                commInsert.ExecuteNonQuery();
+                log.Info("Faces is updated");
+                conn3.Close();
+            }
+        }
     }
     conn.Close();
     log.Info("Analytics is done");
@@ -172,7 +201,7 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
         client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("visionAPI", EnvironmentVariableTarget.Process));
 
         // Request parameters
-        queryString["visualFeatures"] = "Adult";
+        queryString["visualFeatures"] = "Adult, Faces, Tags";
         var uri = "https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze?" + queryString;
 
         HttpResponseMessage response;
@@ -218,3 +247,74 @@ private static async Task<string> GetEmotionData(string imageUri, TraceWriter lo
         log.Info(s);
         return s;
 }
+
+   class Data
+    {
+        public Adult adult {get; set;}
+
+        public List<Tag> tags { get; set; }
+
+        public List<Face> faces { get; set; }
+}
+
+    public class Adult
+    {
+        public bool isAdultContent { get; set; }
+
+        public bool isRacyContent { get; set; }
+
+        public double adultScore { get; set; }
+
+        public double racyScore { get; set; }
+
+
+    }
+
+    public class Face
+    {
+        public int age { get; set; }
+    }
+
+    public class Tag
+    {
+        public string name { get; set; }
+
+        public double confidence { get; set; }
+    }
+
+    class FaceData
+    {
+        public FaceRectangle faceRectangle { get; set; }
+
+        public Scores scores { get; set; }
+    }
+
+    public class FaceRectangle
+    {
+        public int height { get; set; }
+
+        public int left { get; set; }
+
+        public int top { get; set; }
+
+        public int width { get; set; }
+    }
+
+    public class Scores
+    {
+        public double anger { get; set; }
+
+        public double contempt { get; set; }
+
+        public double disgust { get; set; }
+
+        public double fear { get; set; }
+
+        public double happiness { get; set; }
+
+        public double neutral { get; set; }
+
+        public double sadness { get; set; }
+
+        public double surprise { get; set; }
+    }
