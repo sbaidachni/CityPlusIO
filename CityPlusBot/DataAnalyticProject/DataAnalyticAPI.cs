@@ -16,7 +16,7 @@ namespace DataAnalyticProject
             db = new cityplusdbEntities();
         }
 
-        static cityplusdbEntities db;
+        public static cityplusdbEntities db;
         public static int AddSession(string channelid)
         {
             Session ses = new Session();

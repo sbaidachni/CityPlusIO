@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="cityplusdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="cityplusdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Attachments">
           <Key>
             <PropertyRef Name="AttachmentId" />
@@ -30,6 +30,38 @@
           <Property Name="GeoCoordinates" Type="geography" />
           <Property Name="UtcDateTime" Type="datetime" Nullable="false" />
           <Property Name="sentiment" Type="real" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Location" Type="geography" Nullable="false" />
+          <Property Name="Channel" Type="nvarchar" MaxLength="50" />
+          <Property Name="AccountID" Type="nvarchar" MaxLength="255" />
+          <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
+          <Property Name="ClientNotificationUri" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Resources">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Food" Type="int" />
+          <Property Name="Shelter" Type="int" />
+          <Property Name="Clothes" Type="int" />
+          <Property Name="Medicine" Type="int" />
+          <Property Name="Location" Type="geography" />
+        </EntityType>
+        <EntityType Name="ResourcesProvided">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ConversationId" Type="int" />
+          <Property Name="ResourceId" Type="bigint" />
         </EntityType>
         <EntityType Name="Sessions">
           <Key>
@@ -67,9 +99,36 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ResourcesProvided_Conversations">
+          <End Role="Conversations" Type="Self.Conversations" Multiplicity="0..1" />
+          <End Role="ResourcesProvided" Type="Self.ResourcesProvided" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Conversations">
+              <PropertyRef Name="ConversationId" />
+            </Principal>
+            <Dependent Role="ResourcesProvided">
+              <PropertyRef Name="ConversationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ResourcesProvided_Resources">
+          <End Role="Resources" Type="Self.Resources" Multiplicity="0..1" />
+          <End Role="ResourcesProvided" Type="Self.ResourcesProvided" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ResourcesProvided">
+              <PropertyRef Name="ResourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="cityplusdbModelStoreContainer">
           <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Conversations" EntityType="Self.Conversations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resources" EntityType="Self.Resources" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ResourcesProvided" EntityType="Self.ResourcesProvided" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sessions" EntityType="Self.Sessions" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Attachments_Conversations" Association="Self.FK_Attachments_Conversations">
             <End Role="Conversations" EntitySet="Conversations" />
@@ -79,9 +138,16 @@
             <End Role="Sessions" EntitySet="Sessions" />
             <End Role="Conversations" EntitySet="Conversations" />
           </AssociationSet>
+          <AssociationSet Name="FK_ResourcesProvided_Conversations" Association="Self.FK_ResourcesProvided_Conversations">
+            <End Role="Conversations" EntitySet="Conversations" />
+            <End Role="ResourcesProvided" EntitySet="ResourcesProvided" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ResourcesProvided_Resources" Association="Self.FK_ResourcesProvided_Resources">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="ResourcesProvided" EntitySet="ResourcesProvided" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="cityplusdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -113,6 +179,7 @@
           <Property Name="sentiment" Type="Single" />
           <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_Conversations" FromRole="Conversations" ToRole="Attachments" />
           <NavigationProperty Name="Session" Relationship="Self.FK_Conversations_Sessions" FromRole="Conversations" ToRole="Sessions" />
+          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Conversations" FromRole="Conversation" ToRole="ResourcesProvided" />
         </EntityType>
         <EntityType Name="Session">
           <Key>
@@ -163,7 +230,77 @@
             <End Role="Sessions" EntitySet="Sessions" />
             <End Role="Conversations" EntitySet="Conversations" />
           </AssociationSet>
+          <EntitySet Name="Resources" EntityType="cityplusdbModel.Resource" />
+          <EntitySet Name="ResourcesProvideds" EntityType="cityplusdbModel.ResourcesProvided" />
+          <AssociationSet Name="FK_ResourcesProvided_Conversations" Association="cityplusdbModel.FK_ResourcesProvided_Conversations">
+            <End Role="Conversation" EntitySet="Conversations" />
+            <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ResourcesProvided_Resources" Association="cityplusdbModel.FK_ResourcesProvided_Resources">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
+          </AssociationSet>
+          <EntitySet Name="People" EntityType="cityplusdbModel.Person" />
         </EntityContainer>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Food" Type="Int32" />
+          <Property Name="Shelter" Type="Int32" />
+          <Property Name="Clothes" Type="Int32" />
+          <Property Name="Medicine" Type="Int32" />
+          <Property Name="Location" Type="Geography" />
+          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="Resource" ToRole="ResourcesProvided" />
+        </EntityType>
+        <EntityType Name="ResourcesProvided">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ConversationId" Type="Int32" />
+          <Property Name="ResourceId" Type="Int64" />
+          <NavigationProperty Name="Conversation" Relationship="cityplusdbModel.FK_ResourcesProvided_Conversations" FromRole="ResourcesProvided" ToRole="Conversation" />
+          <NavigationProperty Name="Resource" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="ResourcesProvided" ToRole="Resource" />
+        </EntityType>
+        <Association Name="FK_ResourcesProvided_Conversations">
+          <End Type="cityplusdbModel.Conversation" Role="Conversation" Multiplicity="0..1" />
+          <End Type="cityplusdbModel.ResourcesProvided" Role="ResourcesProvided" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Conversation">
+              <PropertyRef Name="ConversationId" />
+            </Principal>
+            <Dependent Role="ResourcesProvided">
+              <PropertyRef Name="ConversationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ResourcesProvided_Resources">
+          <End Type="cityplusdbModel.Resource" Role="Resource" Multiplicity="0..1" />
+          <End Type="cityplusdbModel.ResourcesProvided" Role="ResourcesProvided" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ResourcesProvided">
+              <PropertyRef Name="ResourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Location" Type="Geography" Nullable="false" />
+          <Property Name="Channel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccountID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ClientNotificationUri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -204,6 +341,41 @@
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
                 <ScalarProperty Name="ChannelId" ColumnName="ChannelId" />
                 <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resources">
+            <EntityTypeMapping TypeName="cityplusdbModel.Resource">
+              <MappingFragment StoreEntitySet="Resources">
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Medicine" ColumnName="Medicine" />
+                <ScalarProperty Name="Clothes" ColumnName="Clothes" />
+                <ScalarProperty Name="Shelter" ColumnName="Shelter" />
+                <ScalarProperty Name="Food" ColumnName="Food" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResourcesProvideds">
+            <EntityTypeMapping TypeName="cityplusdbModel.ResourcesProvided">
+              <MappingFragment StoreEntitySet="ResourcesProvided">
+                <ScalarProperty Name="ResourceId" ColumnName="ResourceId" />
+                <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="People">
+            <EntityTypeMapping TypeName="cityplusdbModel.Person">
+              <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="ClientNotificationUri" ColumnName="ClientNotificationUri" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AccountID" ColumnName="AccountID" />
+                <ScalarProperty Name="Channel" ColumnName="Channel" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

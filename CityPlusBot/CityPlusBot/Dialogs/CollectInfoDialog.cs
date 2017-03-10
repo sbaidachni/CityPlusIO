@@ -1,6 +1,5 @@
 ﻿namespace CityPlusBot.Dialogs
 {
-    using CityPlusBot.Models;
     using King.Mapper;
     using King.Mapper.Data;
     using Microsoft.Bot.Builder.Dialogs;
@@ -23,6 +22,7 @@
         private const string _currentLocationStr = "CurrentLocation";
         //private const string _resourceStr = "Resources";
         private bool _locationConfirmed = false;
+        private int sessionId = 0;
         //private bool _formConfirmed = false;
         #endregion
 
@@ -40,11 +40,13 @@
 
         public async Task StartAsync(IDialogContext context)
         {
+            sessionId= DataAnalyticProject.DataAnalyticAPI.AddSession(context.Activity.ChannelId);
             context.Wait(Introduction);
         }
         public async Task Introduction(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
+            DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, message.Text);
             await context.PostAsync("I'm the CityPlus bot. I'm here to help you find the nearby resources you need.");
             //context.Wait(Introduction);
             await GetInformation(context);
@@ -86,27 +88,24 @@
                 // All the relevant information has been collected!
 
                // var geo = location.GetGeoCoordinates();
-
-
+               
                 var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
-                var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resources WHERE geography::STGeomFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326).STDistance(latlong) <= 10000";
-                IList<Resource> resources = null;
+
                 using (var connection = new SqlConnection(WebConfigurationManager.AppSettings["ConnectionString"]))
                 {
                     // Save the user information
                     var executor = new Executor(connection);
                     await executor.NonQuery(insert);
 
-                    // Query the database
-                    var reader = await executor.Query(select);
-                    resources = reader.Models<Resource>().ToList();
                 }
 
+                var resources = from a in DataAnalyticProject.DataAnalyticAPI.db.Resources select a;
+
                 // Return the results!
-                if (resources != null && resources.Count > 0)
+                if (resources != null && resources.Count() > 0)
                 {
                     var locationsCardReply = context.MakeMessage();
-                    locationsCardReply.Attachments = await CreateResourceCards("", resources);
+                    locationsCardReply.Attachments = await CreateResourceCards("", resources.ToList());
                     locationsCardReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                     await context.PostAsync(locationsCardReply);
 
@@ -129,11 +128,13 @@
             var accepted = (await result);
             if (accepted)
             {
+                DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, "location confirmed");
                 // This is the correct address move on to checking the form!
                 _locationConfirmed = true;
             }
             else
             {
+                DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, "location is not confirmed");
                 // The location is wrong!
                 _locationConfirmed = false;
                 // Clear out the information and start again!
@@ -191,6 +192,7 @@
                     }.Where(x => !string.IsNullOrEmpty(x)));
 
                 await context.PostAsync("I have set your location as : " + formattedAddress);
+                DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, $"location is provided:{formattedAddress}");
 
                 var geoLocationEntity = new Entity();
                 geoLocationEntity.SetAs(place);
@@ -201,7 +203,7 @@
             await GetInformation(context);
         }
 
-        public async Task<IList<Attachment>> CreateResourceCards(string apiKey, IList<Resource> resources)
+        public async Task<IList<Attachment>> CreateResourceCards(string apiKey, IList<DataAnalyticProject.Resource> resources)
         {
             var attachments = new List<Attachment>();
             foreach (var resource in resources)
@@ -209,16 +211,16 @@
                 var heroCard = new HeroCard
                 {
                     Title = resource.Name,
-                    Subtitle = resource.Location,
+                    Subtitle = resource.Address,
                     Text = $"Resources Available : Medicine {resource.Medicine}, Shelter {resource.Shelter}, Food {resource.Food}, Clothes {resource.Clothes}",
 
                 };
 
 
-                if (resource.latitude != 0 && resource.longitude != 0)
+                if ((resource.Location!=null)&&(resource.Location.Latitude != 0 && resource.Location.Longitude != 0))
                 {
                     var helper = new BingHelper();
-                    var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(resource.latitude), Convert.ToDouble(resource.longitude));
+                    var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(resource.Location.Latitude), Convert.ToDouble(resource.Location.Longitude));
                     var location = locations.Locations.FirstOrDefault();
 
                     if (location != null)

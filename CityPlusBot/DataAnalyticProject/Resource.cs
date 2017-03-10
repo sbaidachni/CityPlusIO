@@ -12,25 +12,22 @@ namespace DataAnalyticProject
     using System;
     using System.Collections.Generic;
     
-    public partial class Conversation
+    public partial class Resource
     {
-        public Conversation()
+        public Resource()
         {
-            this.Attachments = new HashSet<Attachment>();
             this.ResourcesProvideds = new HashSet<ResourcesProvided>();
         }
     
-        public int ConversationId { get; set; }
-        public int SessionId { get; set; }
-        public string Text { get; set; }
-        public string Locale { get; set; }
+        public long Id { get; set; }
         public string Address { get; set; }
-        public System.Data.Spatial.DbGeography GeoCoordinates { get; set; }
-        public System.DateTime UtcDateTime { get; set; }
-        public Nullable<float> sentiment { get; set; }
+        public string Name { get; set; }
+        public Nullable<int> Food { get; set; }
+        public Nullable<int> Shelter { get; set; }
+        public Nullable<int> Clothes { get; set; }
+        public Nullable<int> Medicine { get; set; }
+        public System.Data.Spatial.DbGeography Location { get; set; }
     
-        public virtual ICollection<Attachment> Attachments { get; set; }
-        public virtual Session Session { get; set; }
         public virtual ICollection<ResourcesProvided> ResourcesProvideds { get; set; }
     }
 }

@@ -98,7 +98,16 @@
       <DependentUpon>cityPlusModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DataAnalyticAPI.cs" />
+    <Compile Include="Person.cs">
+      <DependentUpon>cityPlusModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource.cs">
+      <DependentUpon>cityPlusModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResourcesProvided.cs">
+      <DependentUpon>cityPlusModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs">
       <DependentUpon>cityPlusModel.tt</DependentUpon>
     </Compile>
