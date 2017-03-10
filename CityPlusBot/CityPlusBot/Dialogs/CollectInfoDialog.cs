@@ -8,6 +8,7 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Threading.Tasks;
+    using CityPlusBot.Models;
     using System.Web.Configuration;
 
     [Serializable]
@@ -92,7 +93,7 @@
                     // Query the database
                     var reader = await executor.Query(select);
 
-                    var users = reader.Models<CityPlusBot.Resource>();
+                    var users = reader.Models<Resource>();
 
                 }
                 // Return the results!
