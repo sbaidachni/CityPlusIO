@@ -1,17 +1,17 @@
 ﻿namespace CityPlusBot.Dialogs
 {
+    using CityPlusBot.Models;
+    using King.Mapper;
     using King.Mapper.Data;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Location;
     using Microsoft.Bot.Connector;
     using System;
+    using System.Configuration;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Threading.Tasks;
-    using CityPlusBot.Models;
     using System.Web.Configuration;
-    using System.Configuration;
-    using King.Mapper;
 
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
@@ -81,7 +81,7 @@
             {
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
-                
+
 
                 var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('{location.Geo.Latitude}', '{location.Geo.Longitude}', 4326))";
                 var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resource WHERE Location.geography::Point({location.Geo.Latitude}, {location.Geo.Longitude}, 4326) <= 100";
@@ -91,7 +91,7 @@
                     // Save the user information
                     var executor = new Executor(connection);
                     await executor.NonQuery(insert);
-                    
+
                     // Query the database
                     var reader = await executor.Query(select);
 
@@ -149,12 +149,12 @@
             context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
-/*
-        private async Task GetResources(IDialogContext context)
-        {
-            // Call the form Dialog!
-        }
-        */
+        /*
+                private async Task GetResources(IDialogContext context)
+                {
+                    // Call the form Dialog!
+                }
+                */
         private async Task ResumeAfterLocationDialogAsync(IDialogContext context, IAwaitable<Place> result)
         {
             var place = await result;
@@ -172,12 +172,12 @@
 
                 await context.PostAsync("I have set your location as : " + formattedAddress);
 
-
                 var geoLocationEntity = new Entity();
                 geoLocationEntity.SetAs(place);
                 _locationConfirmed = true;
                 context.UserData.SetValue(_currentLocationStr, geoLocationEntity);
             }
+
             await GetInformation(context);
         }
     }
