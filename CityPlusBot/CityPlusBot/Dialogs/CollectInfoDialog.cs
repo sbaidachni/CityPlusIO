@@ -13,6 +13,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Configuration;
+    using System.Data.Spatial;
 
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
@@ -100,8 +101,12 @@
                     await executor.NonQuery(insert);
 
                 }
+                var point = DbGeography.FromGml($"POINT({location.Geo.longitude} {location.Geo.latitude})");
+                var resources = from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
+                                where a.Location.Distance(point)<=1000
+                                //where DbGeography::STGeomFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326).STDistance(latlong) <= 10000
+                                select a;
 
-                var resources = from a in DataAnalyticProject.DataAnalyticAPI.db.Resources select a;
 
                 // Return the results!
                 if (resources != null && resources.Count() > 0)
