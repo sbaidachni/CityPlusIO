@@ -8,12 +8,12 @@
         <EntityTypeShape EntityType="cityplusdbModel.Attachment" Width="1.5" PointX="5.25" PointY="5.25" />
         <EntityTypeShape EntityType="cityplusdbModel.Conversation" Width="1.5" PointX="3" PointY="2.25" />
         <EntityTypeShape EntityType="cityplusdbModel.Person" Width="1.5" PointX="7.75" PointY="0.75" />
-        <EntityTypeShape EntityType="cityplusdbModel.Resource" Width="1.5" PointX="3" PointY="6.5" />
         <EntityTypeShape EntityType="cityplusdbModel.ResourcesProvided" Width="1.5" PointX="5.25" PointY="1.875" />
         <EntityTypeShape EntityType="cityplusdbModel.Session" Width="1.5" PointX="0.75" PointY="3" />
         <AssociationConnector Association="cityplusdbModel.FK_Attachments_Conversations" />
         <AssociationConnector Association="cityplusdbModel.FK_Conversations_Sessions" />
         <AssociationConnector Association="cityplusdbModel.FK_ResourcesProvided_Conversations" />
+        <EntityTypeShape EntityType="cityplusdbModel.Resource" Width="1.5" PointX="0.75" PointY="7" />
         <AssociationConnector Association="cityplusdbModel.FK_ResourcesProvided_Resources" />
       </Diagram>
     </edmx:Diagrams>

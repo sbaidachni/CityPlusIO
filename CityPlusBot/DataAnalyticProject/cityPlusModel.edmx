@@ -52,7 +52,8 @@
           <Property Name="Shelter" Type="int" />
           <Property Name="Clothes" Type="int" />
           <Property Name="Medicine" Type="int" />
-          <Property Name="Location" Type="geography" />
+          <Property Name="Lon" Type="real" />
+          <Property Name="Lat" Type="real" />
         </EntityType>
         <EntityType Name="ResourcesProvided">
           <Key>
@@ -154,7 +155,6 @@
           <EntitySet Name="Attachments" EntityType="cityplusdbModel.Attachment" />
           <EntitySet Name="Conversations" EntityType="cityplusdbModel.Conversation" />
           <EntitySet Name="People" EntityType="cityplusdbModel.Person" />
-          <EntitySet Name="Resources" EntityType="cityplusdbModel.Resource" />
           <EntitySet Name="ResourcesProvideds" EntityType="cityplusdbModel.ResourcesProvided" />
           <EntitySet Name="Sessions" EntityType="cityplusdbModel.Session" />
           <AssociationSet Name="FK_Attachments_Conversations" Association="cityplusdbModel.FK_Attachments_Conversations">
@@ -169,6 +169,7 @@
             <End Role="Conversation" EntitySet="Conversations" />
             <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
           </AssociationSet>
+          <EntitySet Name="Resources" EntityType="cityplusdbModel.Resource" />
           <AssociationSet Name="FK_ResourcesProvided_Resources" Association="cityplusdbModel.FK_ResourcesProvided_Resources">
             <End Role="Resource" EntitySet="Resources" />
             <End Role="ResourcesProvided" EntitySet="ResourcesProvideds" />
@@ -213,19 +214,6 @@
           <Property Name="AccountID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ClientNotificationUri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Resource">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Food" Type="Int32" />
-          <Property Name="Shelter" Type="Int32" />
-          <Property Name="Clothes" Type="Int32" />
-          <Property Name="Medicine" Type="Int32" />
-          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="Resource" ToRole="ResourcesProvided" />
         </EntityType>
         <EntityType Name="ResourcesProvided">
           <Key>
@@ -286,6 +274,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Food" Type="Int32" />
+          <Property Name="Shelter" Type="Int32" />
+          <Property Name="Clothes" Type="Int32" />
+          <Property Name="Medicine" Type="Int32" />
+          <Property Name="Lon" Type="Single" />
+          <Property Name="Lat" Type="Single" />
+          <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="Resource" ToRole="ResourcesProvided" />
+        </EntityType>
         <Association Name="FK_ResourcesProvided_Resources">
           <End Type="cityplusdbModel.Resource" Role="Resource" Multiplicity="0..1" />
           <End Type="cityplusdbModel.ResourcesProvided" Role="ResourcesProvided" Multiplicity="*" />
@@ -343,19 +346,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Resources">
-            <EntityTypeMapping TypeName="cityplusdbModel.Resource">
-              <MappingFragment StoreEntitySet="Resources">
-                <ScalarProperty Name="Medicine" ColumnName="Medicine" />
-                <ScalarProperty Name="Clothes" ColumnName="Clothes" />
-                <ScalarProperty Name="Shelter" ColumnName="Shelter" />
-                <ScalarProperty Name="Food" ColumnName="Food" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ResourcesProvideds">
             <EntityTypeMapping TypeName="cityplusdbModel.ResourcesProvided">
               <MappingFragment StoreEntitySet="ResourcesProvided">
@@ -371,6 +361,21 @@
                 <ScalarProperty Name="UtcDateTime" ColumnName="UtcDateTime" />
                 <ScalarProperty Name="ChannelId" ColumnName="ChannelId" />
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resources">
+            <EntityTypeMapping TypeName="cityplusdbModel.Resource">
+              <MappingFragment StoreEntitySet="Resources">
+                <ScalarProperty Name="Lat" ColumnName="Lat" />
+                <ScalarProperty Name="Lon" ColumnName="Lon" />
+                <ScalarProperty Name="Medicine" ColumnName="Medicine" />
+                <ScalarProperty Name="Clothes" ColumnName="Clothes" />
+                <ScalarProperty Name="Shelter" ColumnName="Shelter" />
+                <ScalarProperty Name="Food" ColumnName="Food" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

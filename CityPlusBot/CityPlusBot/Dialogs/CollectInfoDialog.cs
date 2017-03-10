@@ -90,7 +90,9 @@
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
 
-               // var geo = location.GetGeoCoordinates();
+                var geo = location.GetGeoCoordinates();
+
+                
                
                 /*var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
 

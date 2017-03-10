@@ -28,8 +28,8 @@ namespace DataAnalyticProject
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Person> People { get; set; }
-        public DbSet<Resource> Resources { get; set; }
         public DbSet<ResourcesProvided> ResourcesProvideds { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<Resource> Resources { get; set; }
     }
 }

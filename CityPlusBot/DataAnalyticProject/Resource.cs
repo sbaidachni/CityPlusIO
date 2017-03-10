@@ -26,6 +26,8 @@ namespace DataAnalyticProject
         public Nullable<int> Shelter { get; set; }
         public Nullable<int> Clothes { get; set; }
         public Nullable<int> Medicine { get; set; }
+        public Nullable<float> Lon { get; set; }
+        public Nullable<float> Lat { get; set; }
     
         public virtual ICollection<ResourcesProvided> ResourcesProvideds { get; set; }
     }

@@ -36,8 +36,6 @@ namespace DataAnalyticProject
                 conv.Text = "resources provided";
                 conv.UtcDateTime = DateTime.UtcNow;
 
-
-
                 foreach (var r in resources)
                 {
                     ResourcesProvided res = new ResourcesProvided();
