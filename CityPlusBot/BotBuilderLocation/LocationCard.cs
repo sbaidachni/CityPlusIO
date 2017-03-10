@@ -22,9 +22,29 @@
             var attachments = new List<Attachment>();
 
             int i = 1;
-
-            if (locations.Count > 1)
+            if (locations.Count == 1)
             {
+                var location = locations.FirstOrDefault();
+                string address = location.Address.FormattedAddress;
+
+                var heroCard = new HeroCard
+                {
+                    Subtitle = address
+                };
+
+                if (location.Point != null)
+                {
+                    var image =
+                        new CardImage(
+                            url: new BingGeoSpatialService().GetLocationMapImageUrl(apiKey, location, i));
+
+                    heroCard.Images = new[] { image };
+                }
+                attachments.Add(heroCard.ToAttachment());
+                return attachments;
+            }
+            if (locations.Count > 1)
+            { 
                 // Include the search again option!
                 var heroCard = new HeroCard
                 {
@@ -46,7 +66,6 @@
                 heroCard.Buttons = new List<CardAction>() { action };
                 attachments.Add(heroCard.ToAttachment());
             }
-
             foreach (var location in locations)
             {
                 string address = locations.Count > 1 ? $"{i}. {location.Address.FormattedAddress}" : location.Address.FormattedAddress;

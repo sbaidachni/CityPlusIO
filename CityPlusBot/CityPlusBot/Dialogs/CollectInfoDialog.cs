@@ -23,6 +23,7 @@
         private const string _currentLocationStr = "CurrentLocation";
         //private const string _resourceStr = "Resources";
         private bool _locationConfirmed = false;
+        private User _userProfile = null;
         //private bool _formConfirmed = false;
         #endregion
 
@@ -85,12 +86,13 @@
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
                 // All the relevant information has been collected!
 
-               // var geo = location.GetGeoCoordinates();
+                // var geo = location.GetGeoCoordinates();
 
+                IList<Resource> resources = null;
 
                 var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
                 var select = $"SELECT [Name], [Location], [Food], [Shelter], [Clothes], [Medicine], [Id] FROM Resources WHERE geography::STGeomFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326).STDistance(latlong) <= 10000";
-                IList<Resource> resources = null;
+                
                 using (var connection = new SqlConnection(WebConfigurationManager.AppSettings["ConnectionString"]))
                 {
                     // Save the user information
@@ -105,15 +107,21 @@
                 // Return the results!
                 if (resources != null && resources.Count > 0)
                 {
-                    var locationsCardReply = context.MakeMessage();
-                    locationsCardReply.Attachments = await CreateResourceCards("", resources);
-                    locationsCardReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                    await context.PostAsync(locationsCardReply);
+                    var attachments = await CreateResourceCards("", resources);
+                    if (attachments.Count > 0)
+                    {
+                        var locationsCardReply = context.MakeMessage();
+                        locationsCardReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                        await context.PostAsync(locationsCardReply);
 
-                    // Return the results!
+                        await context.PostAsync("We  will notify you know when new resources near you become available.");
+                    }
+                    else
+                    {
+                        // TODO: Set up notifications
+                        await context.PostAsync("Sorry there are no available resources near you at this time. We have all the relevant information and will notify you know when resources near you become available.");
 
-                    // Check if they want to subscribe for notifications...
-                    await context.PostAsync("We have all the relevant information and will notify you know when resources near you become available.");
+                    }
                 }
                 else
                 {
@@ -206,41 +214,37 @@
             var attachments = new List<Attachment>();
             foreach (var resource in resources)
             {
-                var heroCard = new HeroCard
-                {
-                    Title = resource.Name,
-                    Subtitle = resource.Location,
-                    Text = $"Resources Available : Medicine {resource.Medicine}, Shelter {resource.Shelter}, Food {resource.Food}, Clothes {resource.Clothes}",
-
-                };
-
-
                 if (resource.latitude != 0 && resource.longitude != 0)
                 {
+                    var heroCard = new HeroCard
+                    {
+                        Title = resource.Name,
+                        Subtitle = resource.Location,
+                        Text = $"Resources Available : Medicine {resource.Medicine}, Shelter {resource.Shelter}, Food {resource.Food}, Clothes {resource.Clothes}",
+
+                    };
+
                     var helper = new BingHelper();
                     var locations = await helper.GetLocationsByPointAsync(apiKey, Convert.ToDouble(resource.latitude), Convert.ToDouble(resource.longitude));
                     var location = locations.Locations.FirstOrDefault();
 
                     if (location != null)
                     {
-                        var image =
-                            new CardImage(helper.GetLocationMapImageUrl(apiKey, location));
+                        var image = new CardImage(helper.GetLocationMapImageUrl(apiKey, location));
 
+                        var lat = resource.latitude;
+                        var lon = resource.longitude;
 
-                        // https://www.bing.com/maps?osid=384772a7-d16a-4176-9be8-46fe10113ce8&cp=49.275533~-123.156743&lvl=14&v=2&sV=2&form=S00027
-                        // Open directions from current location to here....
-                        /*
                         var action = new CardAction()
                         {
-                            Type = "postBack",
-                            Title = "Open in Maps",
-                            Value = "other"
-                        };*/
+                            Value = $"https://www.bing.com/maps?cp={lat}~{lon}&lvl=14&v=2&sV=2&form=S00027",
+                            Type = "openUrl",
+                            Title = "Open in maps"
+                        };
 
                         heroCard.Images = new[] { image };
                     }
-
-
+                    
                 }
             }
 
