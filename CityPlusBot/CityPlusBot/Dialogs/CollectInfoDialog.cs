@@ -1,5 +1,6 @@
 ﻿namespace CityPlusBot.Dialogs
 {
+    using Models;
     using King.Mapper;
     using King.Mapper.Data;
     using Microsoft.Bot.Builder.Dialogs;
@@ -105,8 +106,8 @@
                 // Return the results!
                 if (resources != null && resources.Count() > 0)
                 {
-                    var attachments = await CreateResourceCards("", resources);
-                    if (attachments.Count > 0)
+                    var attachments = await CreateResourceCards("", resources.ToList());
+                    if (attachments.Count() > 0)
                     {
                         var locationsCardReply = context.MakeMessage();
                         locationsCardReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
@@ -234,8 +235,8 @@
                     {
                         var image = new CardImage(helper.GetLocationMapImageUrl(apiKey, location));
 
-                        var lat = resource.latitude;
-                        var lon = resource.longitude;
+                        var lat = resource.Location.Latitude;
+                        var lon = resource.Location.Longitude;
 
                         var action = new CardAction()
                         {
