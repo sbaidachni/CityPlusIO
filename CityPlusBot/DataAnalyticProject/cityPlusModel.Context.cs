@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CityPlusBot.Data
+namespace DataAnalyticProject
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class cityplusdbData : DbContext
+    public partial class cityplusdbEntities : DbContext
     {
-        public cityplusdbData()
-            : base("name=cityplusdbData")
+        public cityplusdbEntities()
+            : base("name=cityplusdbEntities")
         {
         }
     

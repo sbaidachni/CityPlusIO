@@ -116,16 +116,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\DBModelCity.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DBModelCity.Context.cs</LastGenOutput>
-      <DependentUpon>DBModelCity.edmx</DependentUpon>
-    </Content>
-    <Content Include="Data\DBModelCity.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DBModelCity.edmx</DependentUpon>
-      <LastGenOutput>DBModelCity.cs</LastGenOutput>
-    </Content>
     <Content Include="default.htm" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -135,31 +125,6 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
-    <Compile Include="Data\Attachment.cs">
-      <DependentUpon>DBModelCity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Conversation.cs">
-      <DependentUpon>DBModelCity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\DataAnalyticsApi.cs" />
-    <Compile Include="Data\DBModelCity.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModelCity.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\DBModelCity.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModelCity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\DBModelCity.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModelCity.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Session.cs">
-      <DependentUpon>DBModelCity.tt</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\CollectInfoDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -168,13 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <EntityDeploy Include="Data\DBModelCity.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DBModelCity.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Data\DBModelCity.edmx.diagram">
-      <DependentUpon>DBModelCity.edmx</DependentUpon>
-    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -186,6 +144,10 @@
     <ProjectReference Include="..\BotBuilderLocation\BotBuilderLocation.csproj">
       <Project>{3CC3A7F1-CB7C-4C05-86EA-70B99C113FAD}</Project>
       <Name>BotBuilderLocation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAnalyticProject\DataAnalyticProject.csproj">
+      <Project>{ae546c0d-4ea1-4d5d-9fad-017f4797ffbd}</Project>
+      <Name>DataAnalyticProject</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

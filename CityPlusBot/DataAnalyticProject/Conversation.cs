@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CityPlusBot.Data
+namespace DataAnalyticProject
 {
     using System;
     using System.Collections.Generic;

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="cityplusDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="cityplusdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Attachments">
           <Key>
             <PropertyRef Name="AttachmentId" />
@@ -67,7 +67,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="cityplusDBModelStoreContainer">
+        <EntityContainer Name="cityplusdbModelStoreContainer">
           <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Conversations" EntityType="Self.Conversations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sessions" EntityType="Self.Sessions" Schema="dbo" store:Type="Tables" />
@@ -84,7 +84,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="cityplusDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="cityplusdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Attachment">
           <Key>
             <PropertyRef Name="AttachmentId" />
@@ -151,7 +151,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="cityplusdbData" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="cityplusdbEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Attachments" EntityType="Self.Attachment" />
           <EntitySet Name="Conversations" EntityType="Self.Conversation" />
           <EntitySet Name="Sessions" EntityType="Self.Session" />
@@ -169,9 +169,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="cityplusDBModelStoreContainer" CdmEntityContainer="cityplusdbData">
+        <EntityContainerMapping StorageEntityContainer="cityplusdbModelStoreContainer" CdmEntityContainer="cityplusdbEntities">
           <EntitySetMapping Name="Attachments">
-            <EntityTypeMapping TypeName="cityplusDBModel.Attachment">
+            <EntityTypeMapping TypeName="cityplusdbModel.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
                 <ScalarProperty Name="AttachmentId" ColumnName="AttachmentId" />
                 <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
@@ -185,7 +185,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Conversations">
-            <EntityTypeMapping TypeName="cityplusDBModel.Conversation">
+            <EntityTypeMapping TypeName="cityplusdbModel.Conversation">
               <MappingFragment StoreEntitySet="Conversations">
                 <ScalarProperty Name="ConversationId" ColumnName="ConversationId" />
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
@@ -199,7 +199,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Sessions">
-            <EntityTypeMapping TypeName="cityplusDBModel.Session">
+            <EntityTypeMapping TypeName="cityplusdbModel.Session">
               <MappingFragment StoreEntitySet="Sessions">
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
                 <ScalarProperty Name="ChannelId" ColumnName="ChannelId" />

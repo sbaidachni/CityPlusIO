@@ -129,6 +129,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataAnalyticProject\DataAnalyticProject.csproj">
+      <Project>{ae546c0d-4ea1-4d5d-9fad-017f4797ffbd}</Project>
+      <Name>DataAnalyticProject</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
