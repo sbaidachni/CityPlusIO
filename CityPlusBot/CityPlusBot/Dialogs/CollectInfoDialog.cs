@@ -11,98 +11,130 @@ namespace CityPlusBot.Dialogs
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
-        const string _currentLocationStr = "CurrentLocation";
-        //public List<Entity> _entities = new List<Entity>();
-        // Location
-        // User Identified Information (For sending notifications)
-        // Description (?)
-        // Resources they need
-        // - Medical help
-        // - Food/Water
-        // - Clothing
-        // - Shelter
+        private const string _checkInTimeStr = "LastCheckInTime";
+        private const string _currentLocationStr = "CurrentLocation";
+        private const string _resourceStr = "Resources";
+        private bool _locationConfirmed = false;
+        private bool _formConfirmed = false;
+
+        // User Data
+        //  - Last Check in time
+        //  - User Identified Information (For sending notifications) (?)
+        //  - Channel Id (For sending notifications) (?)
+        //  - Location
+        //  - List of Resources
+        //      - Medical help
+        //      - Food/Water
+        //      - Clothing
+        //      - Shelter
+
 
         public async Task StartAsync(IDialogContext context)
         {
             context.Wait(Introduction);
         }
-
         public async Task Introduction(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            await context.PostAsync("Hi, I'm the CityPlus bot. I'm here to help find you the resources you need. Please provide me more information so I can better help you.");
+            await context.PostAsync("I'm the CityPlus bot. I'm here to help you find the nearby resources you need.");
             //context.Wait(Introduction);
             await GetInformation(context);
         }
 
         public async Task GetInformation(IDialogContext context)
         {
-            Entity entity = null;  
-            if (!context.UserData.TryGetValue<Entity>(_currentLocationStr, out entity))
+            // First we always need the address!
+            Place location = null;
+            string[] resources = null;
+            if (!context.UserData.TryGetValue<Place>(_currentLocationStr, out location))
                 GetLocation(context).Wait();
+            else if (!_locationConfirmed)
+            {
+                var locationName = location.Name;
+                PromptDialog.Confirm(
+                    context,
+                    this.OnLocationCheck,
+                    $"Are you still at '{locationName}'?",
+                    $"Sorry didn't get that! Are you still at '{locationName}' ? ",
+                    promptStyle: PromptStyle.Auto);
+            }
+            else if (!context.UserData.TryGetValue<string[]>(_resourceStr, out resources))
+                GetResources(context).Wait();
+            else if (!_formConfirmed)
+            {
+                var r = String.Join(",", resources);
+                PromptDialog.Confirm(
+                    context,
+                    this.OnFormCheck,
+                    // TO DO: fill in
+                    $"Are looking for {r}?",
+                    $"Sorry didn't get that! Are you still looking for {r}? ",
+                    promptStyle: PromptStyle.Auto);
+            }
             else
             {
-                var address = entity;
-                /*PromptDialog.Confirm(
-                    context,
-                    this.OnSpellCheckIntent,
-                    $"Did you mean '{this.newMessage}'?",
-                    "Didn't get that!",
-                    promptStyle: PromptStyle.Auto);*/
+                // All the relevant information has been collected!
+                context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
+                // Check if they want to subscribe for notifications...
+                await context.PostAsync("We have all the relevant information and will notify you know when resources near you become available.");
             }
 
-            // Go to Form!
-
-
         }
-/*
-        private async Task OnSpellCheckIntent(IDialogContext context, IAwaitable<bool> result)
+
+        private async Task OnLocationCheck(IDialogContext context, IAwaitable<bool> result)
         {
             var accepted = (await result);
             if (accepted)
             {
-                var uri = this.services[0].BuildUri(new LuisRequest(this.newMessage));
-                var newResult = await this.services[0].QueryAsync(uri, new CancellationToken());
-                switch (newResult.Intents[0].Intent.ToLower())
-                {
-                    case "none":
-                        await this.None(context, newResult);
-                        break;
-                    case "hello":
-                        await this.Hello(context, newResult);
-                        break;
-                    case "viasport.intent.howtocoach":
-                        await this.HowToCoach(context, newResult);
-                        break;
-                    case "viasport.intent.findresource":
-                        await this.FindResource(context, newResult);
-                        break;
-                    case "viasport.intent.findprogram":
-                        await this.FindProgram(context, newResult);
-                        break;
-                }
+                // This is the correct address move on to checking the form!
+                _locationConfirmed = true;
             }
             else
             {
-                var message = "Ok, can you tell me what you meant?";
-                await context.PostAsync(BotDbStrings.MakeItAcceptable(message));
-                context.Wait(this.MessageReceived);
+                // The location is wrong!
+                _locationConfirmed = false;
+                // Clear out the information and start again!
+                context.UserData.RemoveValue(_currentLocationStr);
             }
-        }*/
+            await GetInformation(context);
+        }
+
+        private async Task OnFormCheck(IDialogContext context, IAwaitable<bool> result)
+        {
+            var accepted = (await result);
+            if (accepted)
+            {
+                // This is the form is good to go!
+                _formConfirmed = true;
+            }
+            else
+            {
+                // The form is wrong!
+                _formConfirmed = false;
+                // Clear out the information and start again!
+                context.UserData.RemoveValue(_resourceStr);
+            }
+            await GetInformation(context);
+        }
 
         private async Task GetLocation(IDialogContext context)
         {
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
-            var prompt = "Where are you? Type or say an address or cross streets so we can find resources nearby.";
-            // TODO: Override 
+            var prompt = "Where are you? We need you location to find resources nearby.";
             var locationDialog = new LocationDialog(apiKey, "", prompt, LocationOptions.UseNativeControl, LocationRequiredFields.None);
-           context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
+            context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
+        }
+
+
+        private async Task GetResources(IDialogContext context)
+        {
+            // Call the form Dialog!
         }
 
         private async Task ResumeAfterLocationDialogAsync(IDialogContext context, IAwaitable<Place> result)
         {
             var place = await result;
-            if (place != null)
+            if (place != null && place.Geo != null)
             {
                 var address = place.GetPostalAddress();
                 var formattedAddress = string.Join(", ", new[]
@@ -112,22 +144,17 @@ namespace CityPlusBot.Dialogs
                         address.Region,
                         address.PostalCode,
                         address.Country
-                }.Where(x => !string.IsNullOrEmpty(x)));
-                await BuildFormFlow(context);
-                //await context.PostAsync("Thanks! I will find resources near " + formattedAddress);
+                    }.Where(x => !string.IsNullOrEmpty(x)));
+
+                await context.PostAsync("I have set your location as : " + formattedAddress);
+
+
+                var geoLocationEntity = new Entity();
+                geoLocationEntity.SetAs(place);
+                _locationConfirmed = true;
+                context.UserData.SetValue(_currentLocationStr, geoLocationEntity);
             }
-
-            var geoLocationEntity = new Entity();
-            geoLocationEntity.SetAs(new Place(place));
-
-            context.UserData.SetValue(_currentLocationStr,geoLocationEntity);
-            
-            context.Done<string>(null);
-        }
-
-        private async Task BuildFormFlow(IDialogContext context)
-        {
-
+            await GetInformation(context);
         }
     }
 }

@@ -130,9 +130,9 @@
         /// <param name="context">The context.</param>
         private void PromptForSingleAddressSelection(IDialogContext context)
         {
-            PromptStyle style = this.supportsKeyboard
+            PromptStyle style = PromptStyle.Auto;/*this.supportsKeyboard
                         ? PromptStyle.Keyboard
-                        : PromptStyle.None;
+                        : PromptStyle.None;*/
 
             PromptDialog.Confirm(
                     context,

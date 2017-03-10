@@ -160,7 +160,7 @@ namespace Microsoft.Bot.Builder.Location.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type or say a number to choose the address, or enter &apos;cancel&apos; to exit..
+        ///   Looks up a localized string similar to Sorry I don&apos;t understand please select an address..
         /// </summary>
         internal static string InvalidLocationResponse {
             get {
@@ -196,7 +196,7 @@ namespace Microsoft.Bot.Builder.Location.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I found these results. Type or say a number to choose the address, or enter &apos;other&apos; to select another address..
+        ///   Looks up a localized string similar to I found these results. Please select one..
         /// </summary>
         internal static string MultipleResultsFound {
             get {
