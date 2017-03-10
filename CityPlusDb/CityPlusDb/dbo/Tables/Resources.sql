@@ -4,6 +4,6 @@
     [Food]     NVARCHAR (50)  NULL,
     [Shelter]  NVARCHAR (50)  NULL,
     [Clothes]  NVARCHAR (50)  NULL,
-    [Medicine] NVARCHAR (50)  NULL
+    [Medicine] NVARCHAR (50)  NULL,
+	[latlong] sys.geography
 );
-
