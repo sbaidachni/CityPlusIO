@@ -206,7 +206,7 @@ private static async Task<string> GetVisionData(string imageUri, TraceWriter log
 
         HttpResponseMessage response;
         var container = new King.Azure.Data.Container("images",  System.Environment.GetEnvironmentVariable("cityplusstorage_STORAGE", EnvironmentVariableTarget.Process));
-         log.Info("test");
+        log.Info("test");
         var image = container.Get(imageUri).Result;
 
         log.Info("test");

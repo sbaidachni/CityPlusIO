@@ -1,6 +1,5 @@
 ﻿namespace CityPlusBot.Dialogs
 {
-    using Models;
     using King.Mapper;
     using King.Mapper.Data;
     using Microsoft.Bot.Builder.Dialogs;
@@ -14,32 +13,15 @@
     using System.Threading.Tasks;
     using System.Web.Configuration;
     using System.Data.Spatial;
+    using Newtonsoft.Json.Linq;
 
     [Serializable]
     public class CollectInfoDialog : IDialog<object>
     {
-        #region Members
-        //private static readonly Config config = ConfigurationManager.AppSettings.Map<Config>();
         private const string _checkInTimeStr = "LastCheckInTime";
         private const string _currentLocationStr = "CurrentLocation";
-        //private const string _resourceStr = "Resources";
         private bool _locationConfirmed = false;
         private int sessionId = 0;
-        private User _userProfile = null;
-        //private bool _formConfirmed = false;
-        #endregion
-
-        // User Data
-        //  - Last Check in time
-        //  - User Identified Information (For sending notifications) (?)
-        //  - Channel Id (For sending notifications) (?)
-        //  - Location
-        //  - List of Resources
-        //      - Medical help
-        //      - Food/Water
-        //      - Clothing
-        //      - Shelter
-
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -90,9 +72,7 @@
 
         public async Task GetInformation(IDialogContext context)
         {
-            // First we always need the address!
             Place location = null;
-            //string[] resources = null;
             if (!context.UserData.TryGetValue<Place>(_currentLocationStr, out location))
                 GetLocation(context).Wait();
             else if (!_locationConfirmed)
@@ -104,53 +84,33 @@
                     $"Are you still at '{locationName}'?",
                     $"Sorry didn't get that! Are you still at '{locationName}' ? ",
                     promptStyle: PromptStyle.Auto);
-            }/*
-            else if (!context.UserData.TryGetValue<string[]>(_resourceStr, out resources))
-                GetResources(context).Wait();
-            else if (!_formConfirmed)
-            {
-                var r = String.Join(",", resources);
-                PromptDialog.Confirm(
-                    context,
-                    this.OnFormCheck,
-                    // TO DO: fill in
-                    $"Are looking for {r}?",
-                    $"Sorry didn't get that! Are you still looking for {r}? ",
-                    promptStyle: PromptStyle.Auto);
-            }*/
+            }
             else 
             {
                 context.UserData.SetValue<DateTimeOffset>(_checkInTimeStr, DateTimeOffset.Now);
-                // All the relevant information has been collected!
 
-                //var geo = location.GetGeoCoordinates();
-                //double? lat = geo.Latitude;
-                //double? lon = geo.Longitude;
-                
-                
-               
-                /*var insert = $"INSERT INTO Person ([Location]) VALUES (geography::STPointFromText('POINT({location.Geo.longitude} {location.Geo.latitude})', 4326))";
+                var jObj = (JObject)location.Geo;
+                double lat = Convert.ToDouble(jObj.First.First);
+                double lon = Convert.ToDouble(jObj.First.Next.First);
 
-                using (var connection = new SqlConnection(WebConfigurationManager.AppSettings["ConnectionString"]))
+                var resources = (from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
+                                 select a);
+
+                List<DataAnalyticProject.Resource> oResources = new List<DataAnalyticProject.Resource>();
+
+                foreach(var r in resources)
                 {
-                    // Save the user information
-                    var executor = new Executor(connection);
-                    await executor.NonQuery(insert);
+                    var dist=CalculateDistance(lon, lat, r.Lon, r.Lat);
+                    if (dist < 10) oResources.Add(r);
+                }
 
-                }*/
+                var outputResources = (from a in oResources select a).Take(3).ToList();
 
-                //var point = DbGeography.FromGml($"'POINT({location.Geo.longitude} {location.Geo.latitude})'");
-                var res = (from a in DataAnalyticProject.DataAnalyticAPI.db.Resources
-                                select a);
-                var resources = (from b in res select b).Take(3);
-
-                // Return the results!
-                if (resources != null && resources.Count() > 0)
+                if (outputResources != null && outputResources.Count() > 0)
                 {
+                    DataAnalyticProject.DataAnalyticAPI.AddResources(sessionId, outputResources);
 
-                        DataAnalyticProject.DataAnalyticAPI.AddResources(sessionId,  resources);
-
-                    var attachments = await CreateResourceCards("", resources.ToList());
+                    var attachments = await CreateResourceCards("", outputResources.ToList());
                     if (attachments.Count() > 0)
                     {
                         var locationsCardReply = context.MakeMessage();
@@ -162,14 +122,11 @@
                     }
                     else
                     {
-                        // TODO: Set up notifications
                         await context.PostAsync("Sorry there are no available resources near you at this time. We have all the relevant information and will notify you know when resources near you become available.");
-
                     }
                 }
                 else
                 {
-                    // TODO: Set up notifications
                     await context.PostAsync("Sorry there are no available resources near you at this time. We have all the relevant information and will notify you know when resources near you become available.");
                 }
             }
@@ -182,38 +139,17 @@
             if (accepted)
             {
                 DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, "location confirmed");
-                // This is the correct address move on to checking the form!
                 _locationConfirmed = true;
             }
             else
             {
                 DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, "location is not confirmed");
-                // The location is wrong!
                 _locationConfirmed = false;
-                // Clear out the information and start again!
                 context.UserData.RemoveValue(_currentLocationStr);
             }
             await GetInformation(context);
         }
-        /*
-        private async Task OnFormCheck(IDialogContext context, IAwaitable<bool> result)
-        {
-            var accepted = (await result);
-            if (accepted)
-            {
-                // This is the form is good to go!
-                _formConfirmed = true;
-            }
-            else
-            {
-                // The form is wrong!
-                _formConfirmed = false;
-                // Clear out the information and start again!
-                context.UserData.RemoveValue(_resourceStr);
-            }
-            await GetInformation(context);
-        }
-        */
+
         private async Task GetLocation(IDialogContext context)
         {
             var apiKey = WebConfigurationManager.AppSettings["BingMapsApiKey"];
@@ -223,12 +159,6 @@
             context.Call(locationDialog, this.ResumeAfterLocationDialogAsync);
         }
 
-        /*
-                private async Task GetResources(IDialogContext context)
-                {
-                    // Call the form Dialog!
-                }
-                */
         private async Task ResumeAfterLocationDialogAsync(IDialogContext context, IAwaitable<Place> result)
         {
             var place = await result;
@@ -266,12 +196,10 @@
                 {
                     Title = resource.Name,
                     Subtitle = resource.Address,
-                    Text = $"Resources Available : Medicine {resource.Medicine}, Shelter {resource.Shelter}, Food {resource.Food}, Clothes {resource.Clothes}",
-
-                    };
+                    Text = $"Resources Available : Medicine {resource.Medicine}, Shelter {resource.Shelter}, Food {resource.Food}, Clothes {resource.Clothes}"
+                };
 
                 attachments.Add(heroCard.ToAttachment());
-
 
                 if (resource.Address!=null)
                 {
@@ -294,14 +222,9 @@
 
                         heroCard.Images = new[] { image };
                     }
-                    
                 }
             }
-
-
             return attachments;
         }
-
-
     }
 }

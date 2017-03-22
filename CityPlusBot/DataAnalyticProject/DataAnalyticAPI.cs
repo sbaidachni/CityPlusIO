@@ -27,7 +27,7 @@ namespace DataAnalyticProject
             return ses.SessionId;
         }
 
-        public static void AddResources(int sessionId,IQueryable<Resource> resources)
+        public static void AddResources(int sessionId,List<Resource> resources)
         {
             try
             {
