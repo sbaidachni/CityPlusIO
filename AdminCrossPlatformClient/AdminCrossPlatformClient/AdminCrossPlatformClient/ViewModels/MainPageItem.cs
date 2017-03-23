@@ -1,5 +1,6 @@
 ﻿using AdminCrossPlatformClient.Models;
 using Microsoft.Bot.Builder.Location.Bing;
+using Microsoft.WindowsAzure.Storage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -126,7 +127,11 @@ namespace AdminCrossPlatformClient.ViewModels
 
         public async Task NotifyUsersAsync()
         {
-
+            CloudStorageAccount account = new CloudStorageAccount(new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(ConfigData.StorageCredentialsAccount,ConfigData.StorageCredentials), true);
+            var queueClient=account.CreateCloudQueueClient();
+            var queue=queueClient.GetQueueReference(ConfigData.queueName);
+            await queue.CreateIfNotExistsAsync();
+            await queue.AddMessageAsync(new Microsoft.WindowsAzure.Storage.Queue.CloudQueueMessage(Id.ToString()));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

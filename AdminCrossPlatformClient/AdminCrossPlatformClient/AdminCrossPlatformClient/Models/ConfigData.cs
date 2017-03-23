@@ -11,6 +11,10 @@ namespace AdminCrossPlatformClient.Models
         //initialize the string
         public static string StorageCredentials = "";
 
-        public static string bingApiKey = "Akojo-6zXRRUykspL6k2k-e4FNtv63yq7bsOEfPJxmIuS7eEh8Ll87arblP566Td";
+        public static string StorageCredentialsAccount = "cityplusstorage";
+
+        public static string queueName = "messagelist";
+
+        public static string bingApiKey = "";
     }
 }
