@@ -31,6 +31,7 @@ namespace AdminCrossPlatformClient.ViewModels
         public async Task RefreshDataAsync()
         {
             var table = client.GetTable<Resources>();
+
             tableData = await (from a in table select a).ToListAsync();
 
             Items.Clear();
@@ -53,10 +54,35 @@ namespace AdminCrossPlatformClient.ViewModels
             }
         }
 
+        public async Task LoadMoreDataAsync()
+        {
+            var table = client.GetTable<Resources>();
+
+            tableData = await (from a in table select a).Skip(Items.Count).ToListAsync();
+
+            foreach (var item in tableData)
+            {
+                MainPageItem newItem = new MainPageItem()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Address = item.Address,
+                    Lat = item.Lat,
+                    Lon = item.Lon,
+                    Food = Convert.ToBoolean(item.Food),
+                    Medicine = Convert.ToBoolean(item.Medicine),
+                    Clothes = Convert.ToBoolean(item.Clothes),
+                    Shelter = Convert.ToBoolean(item.Shelter)
+                };
+                Items.Add(newItem);
+            }
+        }
+
         public async Task DeleteItemAsync(MainPageItem item)
         {
-            var resourceDelete = (from a in tableData where a.Id == item.Id select a).FirstOrDefault();
             var table = client.GetTable<Resources>();
+            var resourceDelete = (await (from a in table where a.Id == item.Id select a).ToListAsync()).FirstOrDefault();
+            
             await table.DeleteAsync(resourceDelete);
             Items.Remove(item);
         }
@@ -85,9 +111,10 @@ namespace AdminCrossPlatformClient.ViewModels
 
         public async Task UpdateItemAsync(MainPageItem updateItem)
         {
-            var resourceUpdate = (from a in tableData where a.Id == updateItem.Id select a).FirstOrDefault();
             var table = client.GetTable<Resources>();
-
+            var resourceUpdate = (await (from a in table where a.Id == updateItem.Id select a).ToListAsync()).FirstOrDefault();
+            
+           
             resourceUpdate.Address = updateItem.Address;
             resourceUpdate.Name = updateItem.Name;
             resourceUpdate.Lat = updateItem.Lat;

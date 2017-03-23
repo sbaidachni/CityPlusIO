@@ -14,6 +14,10 @@ namespace AdminCrossPlatformClient
     {
         public MainPage()
         {
+            //for testing only - delete in production
+            User.IsAuthenticated = true;
+            //end delete
+
             InitializeComponent();
         }
 
@@ -78,13 +82,11 @@ namespace AdminCrossPlatformClient
 
         private async void editButton_Clicked(object sender, EventArgs e)
         {
-            var mi = ((MenuItem)sender);
             await Navigation.PushAsync(new ResourceDetails(listView.SelectedItem as MainPageItem, MainPageViewModel.Instance));
         }
 
         private async void deleteButton_Clicked(object sender, EventArgs e)
         {
-            var mi = ((MenuItem)sender);
             await MainPageViewModel.Instance.DeleteItemAsync(listView.SelectedItem as MainPageItem);
         }
 
@@ -99,6 +101,15 @@ namespace AdminCrossPlatformClient
                 User.IsAuthenticated = await App.Authenticator.Authenticate();
 
             await RefreshDataAsync();
+        }
+
+        private async void listView_ItemAppearing(object sender, ItemVisibilityEventArgs e)
+        {
+            var itemTypeObject = e.Item as MainPageItem;
+            if (MainPageViewModel.Instance.Items.Last() == itemTypeObject)
+            {
+                await MainPageViewModel.Instance.LoadMoreDataAsync();
+            }
         }
     }
 }

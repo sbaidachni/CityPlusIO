@@ -38,6 +38,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Bing\Address.cs" />
+    <Compile Include="Bing\BingGeoSpatialService.cs" />
+    <Compile Include="Bing\GeocodePoint.cs" />
+    <Compile Include="Bing\IBingGeoSpatialService.cs" />
+    <Compile Include="Bing\Location.cs" />
+    <Compile Include="Bing\LocationApiResponse.cs" />
+    <Compile Include="Bing\LocationSet.cs" />
     <Compile Include="Models\ConfigData.cs" />
     <Compile Include="Models\IAuthenticate.cs" />
     <Compile Include="Models\MessageToQueue.cs" />
@@ -107,9 +114,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Images\refresh.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

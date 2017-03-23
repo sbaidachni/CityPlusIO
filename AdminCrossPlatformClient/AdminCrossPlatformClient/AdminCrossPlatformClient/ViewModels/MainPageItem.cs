@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdminCrossPlatformClient.Models;
+using Microsoft.Bot.Builder.Location.Bing;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -111,7 +113,15 @@ namespace AdminCrossPlatformClient.ViewModels
 
         public async Task<bool> CheckAddressAsync()
         {
-            return true;
+            BingGeoSpatialService service = new BingGeoSpatialService();
+            var result=await service.GetLocationsByQueryAsync(ConfigData.bingApiKey, this.Address);
+            if ((result.Locations!=null)&&(result.Locations.Count>0)&&(result.Locations[0].Point.HasCoordinates))
+            {
+                Lat = result.Locations[0].Point.Coordinates[0];
+                Lon= result.Locations[0].Point.Coordinates[1];
+                return true;
+            }
+            return false;
         }
 
         public async Task NotifyUsersAsync()

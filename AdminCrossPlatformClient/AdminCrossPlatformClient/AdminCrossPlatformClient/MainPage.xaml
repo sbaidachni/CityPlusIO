@@ -11,7 +11,8 @@
         </Grid.RowDefinitions>
         <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" HorizontalOptions="End" Margin="10"
             Clicked="loginButton_Clicked"/>
-        <ListView x:Name="listView" Grid.Row="1" ItemsSource="{Binding Items}" Margin="0,20,0,20" ItemSelected="listView_ItemSelected">
+        <ListView x:Name="listView" Grid.Row="1" ItemsSource="{Binding Items}" ItemAppearing="listView_ItemAppearing" 
+                  Margin="0,20,0,20" ItemSelected="listView_ItemSelected" CachingStrategy="RecycleElement">
             <ListView.Header>
                 <Grid Padding="20,0,20,0">
                     <Label Text="Name" FontAttributes="Bold"></Label>
