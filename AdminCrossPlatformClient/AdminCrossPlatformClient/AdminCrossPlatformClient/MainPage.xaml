@@ -3,9 +3,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:AdminCrossPlatformClient"
              x:Class="AdminCrossPlatformClient.MainPage">
-
-	<Label Text="Welcome to Xamarin Forms!" 
-           VerticalOptions="Center" 
-           HorizontalOptions="Center" />
-
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ListView x:Name="listView" ItemsSource="{Binding Items}" Margin="0,20,0,20" ItemSelected="listView_ItemSelected">
+            <ListView.Header>
+                <Grid Padding="20,0,20,0">
+                    <Label Text="Name" FontAttributes="Bold"></Label>
+                    <Label Text="Address" FontAttributes="Bold" Grid.Column="1"></Label>
+                    <Label Text="Shelter" FontAttributes="Bold" Grid.Column="2"></Label>
+                    <Label Text="Food" FontAttributes="Bold" Grid.Column="3"></Label>
+                    <Label Text="Medicine" FontAttributes="Bold" Grid.Column="4"></Label>
+                    <Label Text="Clothes" FontAttributes="Bold" Grid.Column="5"></Label>
+                </Grid>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Margin="0,0,0,10" Padding="20,0,20,0">
+                            <Label Text="{Binding Name}"></Label>
+                            <Label Grid.Column="1" Text="{Binding Address}"></Label>
+                            <Switch IsToggled="{Binding Shelter}" Grid.Column="2" IsEnabled="False"></Switch>
+                            <Switch IsToggled="{Binding Food}" Grid.Column="3" IsEnabled="False"></Switch>
+                            <Switch IsToggled="{Binding Medicine}" Grid.Column="4" IsEnabled="False"></Switch>
+                            <Switch IsToggled="{Binding Clothes}" Grid.Column="5" IsEnabled="False"></Switch>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="1" Padding="20" BackgroundColor="Gray">
+            <!-- 
+            E0E0 - delete
+            E109 - add
+            E104 - update
+            E117 - refresh
+            -->
+            <StackLayout Orientation="Horizontal">
+                <Button x:Name="addButton" Text="Add Item" HorizontalOptions="Start" Clicked="addButton_Clicked"></Button>
+                <Button x:Name="editButton" Text="Edit Item" HorizontalOptions="Start" IsEnabled="False" Clicked="editButton_Clicked"></Button>
+                <Button x:Name="refreshButton" Text="Refresh" HorizontalOptions="Start" IsEnabled="True" Clicked="refreshButton_Clicked"></Button>
+                <Button x:Name="deleteButton" Text="Delete" HorizontalOptions="EndAndExpand" IsEnabled="False" Clicked="deleteButton_Clicked"></Button>
+            </StackLayout>
+        </Grid>
+     </Grid>
+    
 </ContentPage>

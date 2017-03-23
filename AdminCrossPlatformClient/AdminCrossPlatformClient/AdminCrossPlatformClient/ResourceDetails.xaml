@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AdminCrossPlatformClient.ResourceDetails">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Text="Id:"></Label>
+        <Label Grid.Column="1" Text="{Binding Id}"></Label>
+        
+        <Label Text="Name:" Grid.Row="1"></Label>
+        <Entry Text="{Binding Name}" Grid.Column="1" Grid.Row="1"></Entry>
+
+        <Label Text="Address:" Grid.Row="2"></Label>
+        <Entry Text="{Binding Address}" Grid.Column="1"  Grid.Row="2"></Entry>
+
+        <Label Text="Is Food:" Grid.Row="3"></Label>
+        <Switch IsToggled="{Binding Food}" Grid.Column="1" Grid.Row="3"></Switch>
+
+        <Label Text="Is Shelter:" Grid.Row="4"></Label>
+        <Switch IsToggled="{Binding Shelter}" Grid.Column="1" Grid.Row="4"></Switch>
+
+        <Label Text="Is Medicine:" Grid.Row="5"></Label>
+        <Switch IsToggled="{Binding Medicine}" Grid.Column="1" Grid.Row="5"></Switch>
+
+        <Label Text="Is Clothes:" Grid.Row="6"></Label>
+        <Switch IsToggled="{Binding Clothes}" Grid.Column="1" Grid.Row="6"></Switch>
+
+        <Label Text="Lat:" Grid.Row="7"></Label>
+        <Label Text="{Binding Lat}" Grid.Column="1" Grid.Row="7"></Label>
+
+        <Label Text="Lon:" Grid.Row="8"></Label>
+        <Label Text="{Binding Lon}" Grid.Column="1" Grid.Row="8"></Label>
+
+        <Label Text="Send Notifications:" Grid.Row="9"></Label>
+        <Switch x:Name="sendSwitch" Grid.Column="1" Grid.Row="9"></Switch>
+
+        <StackLayout Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="Center" Grid.Row="10">
+            <Button Text="Save" Margin="10" Clicked="Save_Button_Clicked"></Button>
+            <Button Text="Cancel" Margin="10" Clicked="Cancel_Button_Clicked"></Button>
+        </StackLayout>
+    </Grid>
+</ContentPage>
