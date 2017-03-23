@@ -19,5 +19,11 @@ namespace DataAnalyticProject
         public string AccountID { get; set; }
         public string AccountName { get; set; }
         public string ClientNotificationUri { get; set; }
+        public Nullable<float> Lon { get; set; }
+        public Nullable<float> Lat { get; set; }
+        public byte[] version { get; set; }
+        public System.DateTimeOffset createdAt { get; set; }
+        public System.DateTimeOffset updatedAt { get; set; }
+        public bool deleted { get; set; }
     }
 }

@@ -40,6 +40,12 @@
           <Property Name="AccountID" Type="nvarchar" MaxLength="255" />
           <Property Name="AccountName" Type="nvarchar" MaxLength="255" />
           <Property Name="ClientNotificationUri" Type="nvarchar(max)" />
+          <Property Name="Lon" Type="real" />
+          <Property Name="Lat" Type="real" />
+          <Property Name="version" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="createdAt" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="updatedAt" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="deleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Resources">
           <Key>
@@ -54,6 +60,10 @@
           <Property Name="Medicine" Type="int" />
           <Property Name="Lon" Type="real" />
           <Property Name="Lat" Type="real" />
+          <Property Name="version" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="createdAt" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="updatedAt" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="deleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ResourcesProvided">
           <Key>
@@ -214,6 +224,12 @@
           <Property Name="AccountID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="AccountName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ClientNotificationUri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Lon" Type="Single" />
+          <Property Name="Lat" Type="Single" />
+          <Property Name="version" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="createdAt" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="updatedAt" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="deleted" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ResourcesProvided">
           <Key>
@@ -288,6 +304,10 @@
           <Property Name="Lon" Type="Single" />
           <Property Name="Lat" Type="Single" />
           <NavigationProperty Name="ResourcesProvideds" Relationship="cityplusdbModel.FK_ResourcesProvided_Resources" FromRole="Resource" ToRole="ResourcesProvided" />
+          <Property Name="version" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="createdAt" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="updatedAt" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="deleted" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_ResourcesProvided_Resources">
           <End Type="cityplusdbModel.Resource" Role="Resource" Multiplicity="0..1" />
@@ -338,6 +358,12 @@
           <EntitySetMapping Name="People">
             <EntityTypeMapping TypeName="cityplusdbModel.Person">
               <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="deleted" ColumnName="deleted" />
+                <ScalarProperty Name="updatedAt" ColumnName="updatedAt" />
+                <ScalarProperty Name="createdAt" ColumnName="createdAt" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="Lat" ColumnName="Lat" />
+                <ScalarProperty Name="Lon" ColumnName="Lon" />
                 <ScalarProperty Name="ClientNotificationUri" ColumnName="ClientNotificationUri" />
                 <ScalarProperty Name="AccountName" ColumnName="AccountName" />
                 <ScalarProperty Name="AccountID" ColumnName="AccountID" />
@@ -367,6 +393,10 @@
           <EntitySetMapping Name="Resources">
             <EntityTypeMapping TypeName="cityplusdbModel.Resource">
               <MappingFragment StoreEntitySet="Resources">
+                <ScalarProperty Name="deleted" ColumnName="deleted" />
+                <ScalarProperty Name="updatedAt" ColumnName="updatedAt" />
+                <ScalarProperty Name="createdAt" ColumnName="createdAt" />
+                <ScalarProperty Name="version" ColumnName="version" />
                 <ScalarProperty Name="Lat" ColumnName="Lat" />
                 <ScalarProperty Name="Lon" ColumnName="Lon" />
                 <ScalarProperty Name="Medicine" ColumnName="Medicine" />

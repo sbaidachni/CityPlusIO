@@ -28,6 +28,10 @@ namespace DataAnalyticProject
         public Nullable<int> Medicine { get; set; }
         public Nullable<float> Lon { get; set; }
         public Nullable<float> Lat { get; set; }
+        public byte[] version { get; set; }
+        public System.DateTimeOffset createdAt { get; set; }
+        public System.DateTimeOffset updatedAt { get; set; }
+        public bool deleted { get; set; }
     
         public virtual ICollection<ResourcesProvided> ResourcesProvideds { get; set; }
     }

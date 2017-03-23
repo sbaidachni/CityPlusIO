@@ -5,7 +5,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="ad364da5701b498f80184e821e97f1b0" Name="Diagram1">
-        <EntityTypeShape EntityType="cityplusdbModel.Attachment" Width="1.5" PointX="5.25" PointY="5.25" />
+        <EntityTypeShape EntityType="cityplusdbModel.Attachment" Width="1.5" PointX="6.125" PointY="5.125" />
         <EntityTypeShape EntityType="cityplusdbModel.Conversation" Width="1.5" PointX="3" PointY="2.25" />
         <EntityTypeShape EntityType="cityplusdbModel.Person" Width="1.5" PointX="7.75" PointY="0.75" />
         <EntityTypeShape EntityType="cityplusdbModel.ResourcesProvided" Width="1.5" PointX="5.25" PointY="1.875" />
