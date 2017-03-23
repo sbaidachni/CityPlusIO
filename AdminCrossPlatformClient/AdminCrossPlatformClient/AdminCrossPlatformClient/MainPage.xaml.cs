@@ -1,4 +1,5 @@
-﻿using AdminCrossPlatformClient.ViewModels;
+﻿using AdminCrossPlatformClient.Models;
+using AdminCrossPlatformClient.ViewModels;
 using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace AdminCrossPlatformClient
             {
                 RebindData();
             }
+
             base.OnAppearing();
         }
 
@@ -39,8 +41,18 @@ namespace AdminCrossPlatformClient
 
         private async Task RefreshDataAsync()
         {
-            this.BindingContext = MainPageViewModel.Instance;
-            await MainPageViewModel.Instance.RefreshDataAsync();
+            if (!User.IsAuthenticated)
+            {
+                loginButton.IsVisible = true;
+                listView.IsVisible = false;
+            }
+            else
+            {
+                loginButton.IsVisible = false;
+                listView.IsVisible = true;
+                this.BindingContext = MainPageViewModel.Instance;
+                await MainPageViewModel.Instance.RefreshDataAsync();
+            }
             editButton.IsEnabled = false;
             deleteButton.IsEnabled = false;
         }
@@ -78,6 +90,14 @@ namespace AdminCrossPlatformClient
 
         private async void refreshButton_Clicked(object sender, EventArgs e)
         {
+            await RefreshDataAsync();
+        }
+
+        private async void loginButton_Clicked(object sender, EventArgs e)
+        {
+            if (App.Authenticator != null)
+                User.IsAuthenticated = await App.Authenticator.Authenticate();
+
             await RefreshDataAsync();
         }
     }

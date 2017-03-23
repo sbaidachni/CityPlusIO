@@ -5,10 +5,13 @@
              x:Class="AdminCrossPlatformClient.MainPage">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <ListView x:Name="listView" ItemsSource="{Binding Items}" Margin="0,20,0,20" ItemSelected="listView_ItemSelected">
+        <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" HorizontalOptions="End" Margin="10"
+            Clicked="loginButton_Clicked"/>
+        <ListView x:Name="listView" Grid.Row="1" ItemsSource="{Binding Items}" Margin="0,20,0,20" ItemSelected="listView_ItemSelected">
             <ListView.Header>
                 <Grid Padding="20,0,20,0">
                     <Label Text="Name" FontAttributes="Bold"></Label>
@@ -34,7 +37,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid Grid.Row="1" Padding="20" BackgroundColor="Gray">
+        <Grid Grid.Row="2" Padding="20" BackgroundColor="Gray">
             <!-- 
             E0E0 - delete
             E109 - add

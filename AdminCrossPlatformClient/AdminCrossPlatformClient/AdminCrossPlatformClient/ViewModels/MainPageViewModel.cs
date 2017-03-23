@@ -18,6 +18,14 @@ namespace AdminCrossPlatformClient.ViewModels
 
         List<Resources> tableData;
 
+        public MobileServiceClient CurrentClient
+        {
+            get
+            {
+                return client;
+            }
+        }
+
         public ObservableCollection<MainPageItem> Items { get; private set; }
 
         public async Task RefreshDataAsync()
@@ -55,30 +63,24 @@ namespace AdminCrossPlatformClient.ViewModels
 
         public async Task AddItemAsync(MainPageItem newItem)
         {
-            try
-            {
-                var table = client.GetTable<Resources>();
 
-                var resources = new Resources()
-                {
-                    Name = newItem.Name,
-                    Address = newItem.Address,
-                    Lon = newItem.Lon,
-                    Lat = newItem.Lat,
-                    Shelter = Convert.ToInt32(newItem.Shelter),
-                    Food = Convert.ToInt32(newItem.Food),
-                    Clothes = Convert.ToInt32(newItem.Clothes),
-                    Medicine = Convert.ToInt32(newItem.Medicine)
-                };
-                
-                await table.InsertAsync(resources);
-                newItem.Id = resources.Id;
-                Items.Add(newItem);
-            }
-            catch(Exception ex)
+            var table = client.GetTable<Resources>();
+
+            var resources = new Resources()
             {
-                Debug.WriteLine(ex.Message);
-            }
+                Name = newItem.Name,
+                Address = newItem.Address,
+                Lon = newItem.Lon,
+                Lat = newItem.Lat,
+                Shelter = Convert.ToInt32(newItem.Shelter),
+                Food = Convert.ToInt32(newItem.Food),
+                Clothes = Convert.ToInt32(newItem.Clothes),
+                Medicine = Convert.ToInt32(newItem.Medicine)
+            };
+
+            await table.InsertAsync(resources);
+            newItem.Id = resources.Id;
+            Items.Add(newItem);
         }
 
         public async Task UpdateItemAsync(MainPageItem updateItem)

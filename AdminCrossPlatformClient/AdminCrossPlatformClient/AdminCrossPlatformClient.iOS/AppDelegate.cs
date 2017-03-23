@@ -4,6 +4,7 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using AdminCrossPlatformClient.iOS.Code;
 
 namespace AdminCrossPlatformClient.iOS
 {
@@ -23,6 +24,7 @@ namespace AdminCrossPlatformClient.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+            App.Init(new AuthenticateUser());
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

@@ -44,34 +44,27 @@ namespace AdminCrossPlatformClient
 
         private async void Save_Button_Clicked(object sender, EventArgs e)
         {
-            try
+            if (!(await Parameter.CheckAddressAsync()))
             {
-                if (!(await Parameter.CheckAddressAsync()))
+                await DisplayAlert("Address is not recognized", "Please, check the address again", "Close");
+            }
+            else
+            {
+                if (Parameter.Id == 0)
                 {
-                    //TODO: popup message
+                    await ViewModel.AddItemAsync(Parameter);
                 }
                 else
                 {
-                    if (Parameter.Id == 0)
-                    {
-                        await ViewModel.AddItemAsync(Parameter);
-                    }
-                    else
-                    {
-                        await ViewModel.UpdateItemAsync(Parameter);
-                    }
-
-                    if (sendSwitch.IsToggled)
-                    {
-                        await Parameter.NotifyUsersAsync();
-                    }
-
-                    await this.Navigation.PopAsync();
+                    await ViewModel.UpdateItemAsync(Parameter);
                 }
-            }
-            catch(Exception ex)
-            {
 
+                if (sendSwitch.IsToggled)
+                {
+                    await Parameter.NotifyUsersAsync();
+                }
+
+                await this.Navigation.PopAsync();
             }
         }
     }

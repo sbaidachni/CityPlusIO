@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdminCrossPlatformClient.UWP.Code;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace AdminCrossPlatformClient.UWP
         public MainPage()
         {
             this.InitializeComponent();
+            AdminCrossPlatformClient.App.Init(new AuthenticateUser());
 
             LoadApplication(new AdminCrossPlatformClient.App());
         }

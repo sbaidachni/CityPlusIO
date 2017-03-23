@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using AdminCrossPlatformClient.Droid.Code;
 
 namespace AdminCrossPlatformClient.Droid
 {
@@ -20,6 +21,9 @@ namespace AdminCrossPlatformClient.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            App.Init(new AuthenticateUser(this));
+
             LoadApplication(new App());
         }
     }
