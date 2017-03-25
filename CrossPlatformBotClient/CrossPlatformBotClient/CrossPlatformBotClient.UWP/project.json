@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "Websockets.Pcl": "1.1.9",
     "Xamarin.Forms": "2.3.3.193"
   },
   "frameworks": {

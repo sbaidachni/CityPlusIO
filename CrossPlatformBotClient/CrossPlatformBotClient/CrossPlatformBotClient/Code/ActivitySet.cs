@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrossPlatformBotClient.Classes
+namespace CrossPlatformBotClient.Code
 {
-    public class MessageSet
+    public class ActivitySet
     {
-        public BotMessage[] messages { get; set; }
+        public Activity[] activities { get; set; }
+
         public string watermark { get; set; }
-        public string eTag { get; set; }
     }
 }

@@ -21,7 +21,10 @@ namespace CrossPlatformBotClient.UWP
         {
             this.InitializeComponent();
 
+            Websockets.Universal.WebsocketConnection.Link();
+
             LoadApplication(new CrossPlatformBotClient.App());
+
         }
     }
 }

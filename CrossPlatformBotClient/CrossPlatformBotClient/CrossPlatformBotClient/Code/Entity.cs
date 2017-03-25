@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrossPlatformBotClient.ViewModels
+namespace CrossPlatformBotClient.Code
 {
-    class MainPageViewModel
+    public class Entity
     {
+        public string type { get; set; }
     }
 }
