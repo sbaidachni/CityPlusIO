@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="CrossPlatformBotClient.UserControls.ConfirmationMessage">
+  <ContentView.Content>
+        <Grid HorizontalOptions="End">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label x:Name="textBlock"></Label>
+            <StackLayout Grid.Row="1" Orientation="Horizontal" x:Name="buttonStack">
+
+            </StackLayout>
+        </Grid>
+      
+
+  </ContentView.Content>
+</ContentView>

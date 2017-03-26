@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="CrossPlatformBotClient.UserControls.MapMessage">
+  <ContentView.Content>
+        <Grid HorizontalOptions="End">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Image x:Name="image"></Image>
+            <Label Grid.Row="1" x:Name="title"></Label>
+            <Label Grid.Row="2" x:Name="subtitle"></Label>
+            <Label Grid.Row="3" x:Name="text"></Label>
+        </Grid>
+  </ContentView.Content>
+</ContentView>

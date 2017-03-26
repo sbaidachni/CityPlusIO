@@ -4,8 +4,20 @@
              xmlns:local="clr-namespace:CrossPlatformBotClient"
              x:Class="CrossPlatformBotClient.MainPage">
 
-	<Label Text="Welcome to Xamarin Forms!" 
-           VerticalOptions="Center" 
-           HorizontalOptions="Center" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ScrollView x:Name="scroll">
+            <StackLayout x:Name="stack" Margin="20" Orientation="Vertical">
+
+            </StackLayout>
+        </ScrollView>
+
+        <Entry x:Name="entry" Grid.Row="1" HeightRequest="200" Margin="20"></Entry>
+        <Button Text="Send" HorizontalOptions="Center" x:Name="button" Grid.Row="2" Margin="20" Clicked="button_Clicked"></Button>
+    </Grid>
 
 </ContentPage>
