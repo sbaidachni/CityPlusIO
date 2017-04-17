@@ -23,19 +23,16 @@
         private bool _locationConfirmed = false;
         private int sessionId = 0;
 
+        public CollectInfoDialog(int sessionId)
+        {
+            this.sessionId = sessionId;
+        }
+
         public async Task StartAsync(IDialogContext context)
         {
-            sessionId= DataAnalyticProject.DataAnalyticAPI.AddSession(context.Activity.ChannelId);
-            context.Wait(Introduction);
-        }
-        public async Task Introduction(IDialogContext context, IAwaitable<IMessageActivity> argument)
-        {
-            var message = await argument;
-            DataAnalyticProject.DataAnalyticAPI.AddConversation(sessionId, message.Text);
-            await context.PostAsync("I'm the CityPlus bot. I'm here to help you find the nearby resources you need.");
-            //context.Wait(Introduction);
             await GetInformation(context);
         }
+ 
 
         private static double DegreesToRadians(double degrees)
         {
@@ -129,6 +126,7 @@
                 {
                     await context.PostAsync("Sorry there are no available resources near you at this time. We have all the relevant information and will notify you know when resources near you become available.");
                 }
+                context.Done<bool>(true);
             }
         }
             

@@ -7,6 +7,7 @@ using System.Web.Http;
 namespace CityPlusBot
 {
     using Dialogs;
+    using System;
     using Activity = Microsoft.Bot.Connector.Activity;
 
     [BotAuthentication]
@@ -14,10 +15,23 @@ namespace CityPlusBot
     {
         public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            // check if activity is of type message
+            StateClient stateClient = activity.GetStateClient();
+            var data=await stateClient.BotState.GetPrivateConversationDataAsync(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
+            int sessionId = data.GetProperty<int>("SessionId");
+            if (sessionId==0)
+            {
+                sessionId = DataAnalyticProject.DataAnalyticAPI.AddSession(activity.ChannelId);
+                data.SetProperty<int>("SessionId",sessionId);
+                await stateClient.BotState.SetPrivateConversationDataAsync(activity.ChannelId, activity.Conversation.Id, activity.From.Id,data);
+            }
+
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new CollectInfoDialog());
+                if (activity.Text!=null)
+                {
+                    await Conversation.SendAsync(activity, () => new LUISDialog(activity.Text,sessionId));
+                }
+                
             }
             else
             {
@@ -30,8 +44,7 @@ namespace CityPlusBot
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
-                // Implement user deletion here
-                // If we handle user deletion, return a real message
+                DataAnalyticProject.DataAnalyticAPI.RemoveUser(message.From.Id, message.From.Name);
             }
             else if (message.Type == ActivityTypes.ConversationUpdate)
             {
@@ -41,8 +54,15 @@ namespace CityPlusBot
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
-                // Handle add/remove from contact lists
-                // Activity.From + Activity.Action represent what happened
+                switch(message.Action)
+                {
+                    case "add":
+                        DataAnalyticProject.DataAnalyticAPI.AddUser(message.From.Id, message.From.Name, message.ChannelId);
+                        break;
+                    case "remove":
+                        DataAnalyticProject.DataAnalyticAPI.RemoveUser(message.From.Id, message.From.Name);
+                        break;
+                }
             }
             else if (message.Type == ActivityTypes.Typing)
             {

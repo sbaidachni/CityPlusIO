@@ -91,6 +91,26 @@ namespace DataAnalyticProject
             queue.AddMessage(new Microsoft.WindowsAzure.Storage.Queue.CloudQueueMessage(conversationId.ToString()));
 
         }
+
+        public static void AddUser(string accountId, string accountName, string channel)
+        {
+            Person p = new Person();
+            p.AccountID = accountId;
+            p.Channel = channel;
+            p.AccountName = accountName;
+            db.People.Add(p);
+            db.SaveChanges();
+        }
+
+        public static void RemoveUser(string accountId, string accountName)
+        {
+            var person = (from a in db.People where a.AccountID == accountId && a.AccountName == accountName select a).FirstOrDefault();
+            if (person != null)
+            {
+                db.People.Remove(person);
+                db.SaveChanges();
+            }
+        }
     }
 
     public enum contentType { image, video};
